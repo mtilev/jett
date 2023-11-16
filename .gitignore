@@ -1,0 +1,5 @@
+/target/
+/jett-core/target/
+/jett-core/output/
+/jett-core/jett-db.properties
+/jett-core/jett-db.script
