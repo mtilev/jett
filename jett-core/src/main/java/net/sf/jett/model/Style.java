@@ -31,7 +31,7 @@ public class Style
     private Short myRowHeight;
     private VerticalAlignment myVerticalAlignment;
     private Boolean amIWrappingText;
-    private FontBoldweight myFontBoldweight;
+    private Boolean myFontBoldweight;
     private FontCharset myFontCharset;
     private String myFontColor;
     private Short myFontHeightInPoints;
@@ -489,7 +489,7 @@ public class Style
      * Returns the font boldweight.
      * @return The font boldweight.
      */
-    public FontBoldweight getFontBoldweight()
+    public Boolean getFontBoldweight()
     {
         return myFontBoldweight;
     }
@@ -498,7 +498,7 @@ public class Style
      * Sets the font boldweight.
      * @param fontBoldweight The font boldweight.
      */
-    public void setFontBoldweight(FontBoldweight fontBoldweight)
+    public void setFontBoldweight(Boolean fontBoldweight)
     {
         myFontBoldweight = fontBoldweight;
         doIHaveStylesToApply = true;

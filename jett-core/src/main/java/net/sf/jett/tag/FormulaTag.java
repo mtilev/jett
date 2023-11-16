@@ -1,22 +1,21 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.expression.Expression;
 import net.sf.jett.expression.ExpressionFactory;
 import net.sf.jett.model.Block;
 import net.sf.jett.util.AttributeUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>A <code>FormulaTag</code> represents a dynamically generated Excel
@@ -106,7 +105,6 @@ public class FormulaTag extends BaseTag
      * Validates the attributes for this <code>Tag</code>.  This tag must be
      * bodiless.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void validateAttributes() throws TagParseException
     {
@@ -126,7 +124,7 @@ public class FormulaTag extends BaseTag
         if (formulaBean != null)
         {
             myFormulaExpression = Expression.evaluateString(
-                    "${" + formulaBean.toString() + "}", getWorkbookContext().getExpressionFactory(), beans)
+                    "${" + formulaBean + "}", getWorkbookContext().getExpressionFactory(), beans)
                     .toString();
         }
         else if (formulaText != null)

@@ -1,18 +1,7 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Sheet;
-
-import net.sf.jett.event.TagLoopListener;
 import net.sf.jett.event.TagLoopEvent;
+import net.sf.jett.event.TagLoopListener;
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.BaseLoopTagStatus;
 import net.sf.jett.model.Block;
@@ -21,6 +10,12 @@ import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.*;
 
 /**
  * <p>The abstract class <code>BaseLoopTag</code> is the base class for all tags
@@ -390,12 +385,7 @@ public abstract class BaseLoopTag extends BaseTag
             {
                 logger.debug("collNames found: {}", collNames);
                 // Remove all collection names not found.
-                for (Iterator<String> itr = fixedSizeCollNames.iterator(); itr.hasNext(); )
-                {
-                    String fixedSizeCollName = itr.next();
-                    if (!collNames.contains(fixedSizeCollName))
-                        itr.remove();
-                }
+				fixedSizeCollNames.removeIf(fixedSizeCollName -> !collNames.contains(fixedSizeCollName));
             }
             else
             {

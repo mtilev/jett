@@ -1,18 +1,5 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.event.TagEvent;
 import net.sf.jett.event.TagListener;
 import net.sf.jett.exception.TagParseException;
@@ -20,6 +7,14 @@ import net.sf.jett.model.Block;
 import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.*;
 
 /**
  * <p>The abstract class <code>BaseTag</code> provides common functionality to
@@ -45,7 +40,7 @@ public abstract class BaseTag implements Tag
     public static final String ATTR_ON_PROCESSED = "onProcessed";
 
     private static final List<String> OPT_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_ON_PROCESSED));
+            new ArrayList<>(Collections.singletonList(ATTR_ON_PROCESSED));
 
     private Map<String, RichTextString> myAttributes;
     private TagContext myContext;
@@ -228,7 +223,7 @@ public abstract class BaseTag implements Tag
      *    <code>Tag</code> was transformed, <code>false</code> if it needs to be
      *    transformed again.  This may happen if the <code>Block</code>
      *    associated with the <code>Tag</code> was removed.
-     * @throws net.sf.jett.exception.TagParseException If all required
+     * @throws TagParseException If all required
      *    attributes are not present, if there is an unrecognized attribute or
      *    attribute value, or if any tag data is unacceptable in any other way.
      * @since 0.3.0

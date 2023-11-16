@@ -1,25 +1,21 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import net.sf.jagg.AggregateFunction;
 import net.sf.jagg.Aggregations;
 import net.sf.jagg.Aggregator;
 import net.sf.jagg.model.AggregateValue;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.Block;
 import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.*;
 
 /**
  * <p>A <code>TotalTag</code> represents an aggregate value calculated from a
@@ -53,7 +49,7 @@ public class TotalTag extends BaseTag
     private static final List<String> REQ_ATTRS =
             new ArrayList<>(Arrays.asList(ATTR_ITEMS, ATTR_VALUE));
     private static final List<String> OPT_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_PARALLEL));
+            new ArrayList<>(Collections.singletonList(ATTR_PARALLEL));
 
     private List<Object> myList = null;
     private AggregateFunction myAggregateFunction = null;
@@ -140,7 +136,7 @@ public class TotalTag extends BaseTag
         List<AggregateValue<Object>> aggValues =
                 Aggregations.groupBy(myList, propsList, aggList, myParallelism);
         // There should be only one AggregateValue with no properties to group by.
-        AggregateValue aggValue = aggValues.get(0);
+        AggregateValue<Object> aggValue = aggValues.get(0);
         Object value = aggValue.getAggregateValue(myAggregateFunction);
         // Replace the bodiless tag text with the proper result.
         Row row = sheet.getRow(block.getTopRowNum());

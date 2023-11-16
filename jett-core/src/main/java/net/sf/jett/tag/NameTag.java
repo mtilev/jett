@@ -1,23 +1,19 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
+import net.sf.jett.exception.AttributeExpressionException;
+import net.sf.jett.exception.TagParseException;
+import net.sf.jett.formula.CellRef;
+import net.sf.jett.formula.Formula;
+import net.sf.jett.model.WorkbookContext;
+import net.sf.jett.util.AttributeUtil;
+import net.sf.jett.util.FormulaUtil;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFName;
 
-import net.sf.jett.exception.AttributeExpressionException;
-import net.sf.jett.exception.TagParseException;
-import net.sf.jett.formula.Formula;
-import net.sf.jett.formula.CellRef;
-import net.sf.jett.model.WorkbookContext;
-import net.sf.jett.util.AttributeUtil;
-import net.sf.jett.util.FormulaUtil;
+import java.util.*;
 
 /**
  * <p>A <code>NameTag</code> indicates an association between an Excel named
@@ -81,7 +77,7 @@ public class NameTag extends BaseTag
     private static final List<String> REQ_ATTRS =
             new ArrayList<>(Arrays.asList(ATTR_NAME, ATTR_FORMULA));
     private static final List<String> OPT_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_PREFER_WORKBOOK_SCOPE));
+            new ArrayList<>(Collections.singletonList(ATTR_PREFER_WORKBOOK_SCOPE));
 
     private Name myNamedRange;
     private String myJettFormula;
@@ -144,12 +140,11 @@ public class NameTag extends BaseTag
         boolean preferWorkbookScopeFirst = AttributeUtil.evaluateBoolean(this,
                 attributes.get(ATTR_PREFER_WORKBOOK_SCOPE), beans, false);
 
-        int numNamedRanges = workbook.getNumberOfNames();
+        final List<? extends Name> namedRanges = workbook.getAllNames();
         String sheetName = sheet.getSheetName();
         myNamedRange = null;
-        for (int i = 0; i < numNamedRanges; i++)
+        for (final Name namedRange : namedRanges)
         {
-            Name namedRange = workbook.getNameAt(i);
             if (preferWorkbookScopeFirst)
             {
                 if (namedRange.getSheetIndex() == -1 && namedRange.getNameName().equals(name))
@@ -240,7 +235,7 @@ public class NameTag extends BaseTag
             {
                 CellRef cellRef = cellRefs.get(i);
                 String cellRefSheetName = cellRef.getSheetName();
-                if (cellRefSheetName == null || "".equals(cellRefSheetName))
+                if (cellRefSheetName == null || cellRefSheetName.isEmpty())
                 {
                     CellRef newCellRef = new CellRef(sheetName, cellRef.getRow(), cellRef.getCol(),
                             cellRef.isRowAbsolute(), cellRef.isColAbsolute());

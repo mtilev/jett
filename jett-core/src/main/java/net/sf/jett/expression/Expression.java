@@ -1,33 +1,21 @@
 package net.sf.jett.expression;
 
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.jexl2.JexlContext;
-import org.apache.commons.jexl2.parser.ASTIdentifier;
-import org.apache.commons.jexl2.parser.ASTMethodNode;
-import org.apache.commons.jexl2.parser.ASTNumberLiteral;
-import org.apache.commons.jexl2.parser.ASTReference;
-import org.apache.commons.jexl2.parser.ASTSizeMethod;
-import org.apache.commons.jexl2.parser.Node;
-import org.apache.commons.jexl2.parser.Parser;
-import org.apache.commons.jexl2.parser.SimpleNode;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.RichTextString;
-
 import net.sf.jett.exception.ParseException;
 import net.sf.jett.formula.Formula;
 import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.util.FormulaUtil;
 import net.sf.jett.util.RichTextStringUtil;
+import org.apache.commons.jexl2.JexlContext;
+import org.apache.commons.jexl2.parser.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.io.StringReader;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>An <code>Expression</code> object represents a JEXL Expression that can
@@ -66,7 +54,7 @@ public class Expression
      */
     public static final String END_EXPR = "}";
 
-    private String myExpression;
+    private final String myExpression;
 
     /**
      * Create an <code>Expression</code>.
@@ -84,7 +72,6 @@ public class Expression
      * @param beans A <code>Map</code> mapping strings to objects.
      * @return The result of the evaluation.
      */
-    @SuppressWarnings("unchecked")
     public Object evaluate(ExpressionFactory factory, Map<String, Object> beans)
     {
         if (beans != null && !beans.isEmpty())
@@ -360,15 +347,15 @@ public class Expression
         {
             Expression expression = new Expression(value.substring(2, value.length() - 1));
             String implColl = expression.getValueIndicatingImplicitCollection(beans, context);
-            if (implColl != null && !"".equals(implColl))
+            if (implColl != null && !implColl.isEmpty())
                 implicitCollections.add(implColl);
         }
-        else if (expressions.size() >= 1)
+        else if (!expressions.isEmpty())
         {
             for (Expression expression : expressions)
             {
                 String implColl = expression.getValueIndicatingImplicitCollection(beans, context);
-                if (implColl != null && !"".equals(implColl))
+                if (implColl != null && !implColl.isEmpty())
                     implicitCollections.add(implColl);
             }
         }
@@ -472,13 +459,9 @@ public class Expression
             int formulaEndIdx = formulaBeginIdx != -1 ?
                     FormulaUtil.getEndOfJettFormula(value, formulaBeginIdx) :
                     value.indexOf(Formula.END_FORMULA);
-            boolean exprFound = true;
+            boolean exprFound = beginIdx <= 0 || value.charAt(beginIdx - 1) != '\\';
             // Skip escaped expressions, e.g. "\${...}".
-            if (beginIdx > 0 && value.charAt(beginIdx - 1) == '\\')
-            {
-                exprFound = false;
-            }
-            // Also, ignore expressions found inside JETT Formulas, which should
+			// Also, ignore expressions found inside JETT Formulas, which should
             // refer to the template sheet name.  JETT Formulas should not trigger
             // implicit collections processing.
             if (formulaBeginIdx != -1 && formulaEndIdx != -1 &&

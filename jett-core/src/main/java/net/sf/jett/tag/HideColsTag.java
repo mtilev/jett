@@ -1,8 +1,7 @@
 package net.sf.jett.tag;
 
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.model.Block;
+import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * <p>A <code>HideColsTag</code> is a <code>BaseHideTag</code> that hides a

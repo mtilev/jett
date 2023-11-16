@@ -1,17 +1,16 @@
 package net.sf.jett.test;
 
-import java.util.Map;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-
+import net.sf.jett.exception.StyleParseException;
 import net.sf.jett.model.Alignment;
 import net.sf.jett.model.BorderType;
-import net.sf.jett.model.FontBoldweight;
 import net.sf.jett.model.FillPattern;
 import net.sf.jett.model.Style;
 import net.sf.jett.parser.StyleParser;
-import net.sf.jett.exception.StyleParseException;
+import org.junit.Test;
+
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * This JUnit Test class tests the <code>StyleParser</code>.
@@ -122,7 +121,7 @@ public class StyleParserTest
         Style style1 = styleMap.get("style1");
         assertNotNull(style1);
         assertTrue(style1.isStyleToApply());
-        assertEquals(FontBoldweight.BOLD, style1.getFontBoldweight());
+        assertTrue(style1.getFontBoldweight());
         assertTrue(style1.isFontItalic());
     }
 
@@ -143,7 +142,7 @@ public class StyleParserTest
         Style style1 = styleMap.get("style1");
         assertNotNull(style1);
         assertTrue(style1.isStyleToApply());
-        assertEquals(FontBoldweight.BOLD, style1.getFontBoldweight());
+        assertTrue(style1.getFontBoldweight());
         assertTrue(style1.isFontItalic());
 
         Style style2 = styleMap.get("style2");

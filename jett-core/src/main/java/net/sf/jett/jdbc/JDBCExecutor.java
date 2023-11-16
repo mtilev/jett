@@ -1,29 +1,15 @@
 package net.sf.jett.jdbc;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * A <code>JDBCExecutor</code> has the capability of running SQL statements via
@@ -36,7 +22,7 @@ public class JDBCExecutor
 {
     private static final Logger logger = LogManager.getLogger();
 
-    private Connection myConnection;
+    private final Connection myConnection;
 
     /**
      * Constructs a <code>JDBCExecutor</code> that will operate over the given
@@ -234,7 +220,7 @@ public class JDBCExecutor
                     else
                     {
                         BufferedReader r = new BufferedReader(clob.getCharacterStream());
-                        StringBuffer buf = new StringBuffer();
+                        StringBuilder buf = new StringBuilder();
                         String line;
                         try
                         {
@@ -276,7 +262,7 @@ public class JDBCExecutor
      * @return A <code>List</code> of <code>Integers</code> that represent the
      *    datatypes of the columns.
      * @throws SQLException If there is a problem accessing the metadata.
-     * @see java.sql.Types
+     * @see Types
      */
     private List<Integer> getTypes(ResultSetMetaData rsmd) throws SQLException
     {

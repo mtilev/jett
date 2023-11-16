@@ -1,14 +1,13 @@
 package net.sf.jett.tag;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.RichTextString;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.parser.TagParser;
 import net.sf.jett.util.SheetUtil;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A <code>TagLibraryRegistry</code> represents a registry for all
@@ -18,7 +17,7 @@ import net.sf.jett.util.SheetUtil;
  */
 public class TagLibraryRegistry
 {
-    private Map<String, TagLibrary> myRegistry;
+    private final Map<String, TagLibrary> myRegistry;
 
     /**
      * Construct a <code>TagLibraryRegistry</code>.
@@ -77,7 +76,7 @@ public class TagLibraryRegistry
         }
         try
         {
-            Tag tag = tagClass.newInstance();
+            Tag tag = tagClass.getDeclaredConstructor().newInstance();
             tag.setContext(context);
             tag.setWorkbookContext(workbookContext);
             tag.setAttributes(attributes);

@@ -17,7 +17,7 @@ import net.sf.jett.event.CellListener;
  */
 public class PopulationCellListener implements CellListener
 {
-    private int myPopThreshold;
+    private final int myPopThreshold;
 
     /**
      * Creates a <code>PopulationCellListener</code> that turns text in all
@@ -55,8 +55,7 @@ public class PopulationCellListener implements CellListener
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
 
-        if (oldValue != null && oldValue.toString().contains("population") &&
-                newValue != null && newValue instanceof Number)
+        if (oldValue != null && oldValue.toString().contains("population") && newValue instanceof Number)
         {
             double population = ((Number) newValue).doubleValue();
             if (population >= myPopThreshold)
@@ -64,15 +63,15 @@ public class PopulationCellListener implements CellListener
                 Workbook workbook = cell.getSheet().getWorkbook();
                 CellStyle style = workbook.createCellStyle();
                 style.cloneStyleFrom(cell.getCellStyle());
-                short fontIdx = style.getFontIndex();
+                int fontIdx = style.getFontIndex();
                 Font font = workbook.getFontAt(fontIdx);
-                Font boldFont = workbook.findFont(Font.BOLDWEIGHT_BOLD, font.getColor(), font.getFontHeight(),
+                Font boldFont = workbook.findFont(true, font.getColor(), font.getFontHeight(),
                         font.getFontName(), font.getItalic(), font.getStrikeout(), font.getTypeOffset(),
                         font.getUnderline());
                 if (boldFont == null)
                 {
                     boldFont = workbook.createFont();
-                    boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+                    boldFont.setBold(true);
                     boldFont.setColor(font.getColor());
                     boldFont.setFontHeight(font.getFontHeight());
                     boldFont.setFontName(font.getFontName());

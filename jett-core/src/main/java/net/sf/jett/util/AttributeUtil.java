@@ -1,17 +1,13 @@
 package net.sf.jett.util;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.CreationHelper;
-
 import net.sf.jett.exception.AttributeExpressionException;
 import net.sf.jett.expression.Expression;
 import net.sf.jett.tag.Tag;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * The <code>AttributeUtil</code> class provides methods for
@@ -399,7 +395,7 @@ public class AttributeUtil
         if (text == null)
             return def;
         Object result = Expression.evaluateString(text, helper, tag.getWorkbookContext().getExpressionFactory(), beans);
-        if (result == null || result.toString().length() == 0)
+        if (result == null || result.toString().isEmpty())
         {
             throw attributeValidationFailure(tag, text.toString(),
                     "Value for \"" + attrName + "\" must not be null or empty");
@@ -444,7 +440,7 @@ public class AttributeUtil
                                                RichTextString text, Map<String, Object> beans, String attrName, String def)
     {
         String result = evaluateString(tag, text, beans, def);
-        if (result == null || result.length() == 0)
+        if (result == null || result.isEmpty())
         {
             throw attributeValidationFailure(tag, text.toString(),
                     "Value for \"" + attrName + "\" must not be null or empty");
@@ -480,7 +476,7 @@ public class AttributeUtil
         }
         throw attributeValidationFailure(tag, text.toString(),
                 "Unknown value for \"" + attrName + "\": " + result +
-                        " (expected one of " + legalValues.toString() + ").");
+                        " (expected one of " + legalValues + ").");
     }
 
     /**
@@ -537,7 +533,6 @@ public class AttributeUtil
      * @throws AttributeExpressionException If the result is not of the expected class or
      *                                      of a subclass.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T evaluateObject(Tag tag,
                                        RichTextString text, Map<String, Object> beans, String attrName, Class<T> expectedClass, T def)
     {
@@ -575,7 +570,7 @@ public class AttributeUtil
         Object obj = Expression.evaluateString(text, tag.getWorkbookContext().getExpressionFactory(), beans);
         if (obj == null)
             throw nullValueOrExpectedVariableMissing(tag, text);
-        Class objClass = obj.getClass();
+        Class<?> objClass = obj.getClass();
         if (expectedClass.isAssignableFrom(objClass))
         {
             // Don't expect a ClassCastException after the above test.
@@ -588,7 +583,7 @@ public class AttributeUtil
             try
             {
                 Class<T> actualClass = (Class<T>) Class.forName(className);
-                result = actualClass.newInstance();
+                result = actualClass.getDeclaredConstructor().newInstance();
                 if (!expectedClass.isInstance(result))
                 {
                     throw attributeValidationFailure(tag, text, "Expected a \"" + expectedClass.getName() + "\" for \"" +
@@ -600,7 +595,8 @@ public class AttributeUtil
                 throw attributeValidationFailure(tag, text, "Expected a \"" + expectedClass.getName() + "\" for \"" +
                         attrName + "\", could not find class \"" + className + "\"", e);
             }
-            catch (InstantiationException | IllegalAccessException | ClassCastException e)
+            catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException
+                   | ClassCastException e)
             {
                 throw attributeValidationFailure(tag, text, "Expected a \"" + expectedClass.getName() + "\" for \"" +
                         attrName + "\", could not instantiate class \"" + className + "\": ", e);
@@ -636,7 +632,7 @@ public class AttributeUtil
             throw nullValueOrExpectedVariableMissing(tag, text.toString());
         if (obj instanceof List)
         {
-            List list = (List) obj;
+            List<?> list = (List<?>) obj;
             result = new ArrayList<>(list.size());
             for (Object item : list)
                 result.add(item.toString());
@@ -689,7 +685,7 @@ public class AttributeUtil
         }
         else if (obj instanceof Collection)
         {
-            Collection c = (Collection) obj;
+            Collection<?> c = (Collection<?>) obj;
 
             for (Object o : c)
             {
@@ -706,7 +702,7 @@ public class AttributeUtil
                     catch (NumberFormatException e)
                     {
                         throw attributeValidationFailure(tag, text.toString(),
-                                "Expected an integer, got " + o.toString(), e);
+                                "Expected an integer, got " + o, e);
                     }
                 }
             }
@@ -776,21 +772,20 @@ public class AttributeUtil
             Integer[][] intArray = (Integer[][]) obj;
             for (Integer[] array : intArray)
             {
-                List<Integer> innerList = new ArrayList<>();
-                innerList.addAll(Arrays.asList(array));
+				List<Integer> innerList = new ArrayList<>(Arrays.asList(array));
                 result.add(innerList);
             }
         }
         else if (obj instanceof Collection)
         {
-            Collection c = (Collection) obj;
+            Collection<?> c = (Collection<?>) obj;
 
             for (Object o : c)
             {
                 List<Integer> innerList = new ArrayList<>();
                 if (o instanceof Collection)
                 {
-                    Collection inner = (Collection) o;
+                    Collection<?> inner = (Collection<?>) o;
                     for (Object innerObj : inner)
                     {
                         if (innerObj instanceof Number)
@@ -806,7 +801,7 @@ public class AttributeUtil
                             catch (NumberFormatException e)
                             {
                                 throw attributeValidationFailure(tag, text.toString(),
-                                        "Expected an integer, got " + o.toString(), e);
+                                        "Expected an integer, got " + o, e);
                             }
                         }
                     }

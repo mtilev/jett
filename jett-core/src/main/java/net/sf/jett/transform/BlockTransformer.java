@@ -1,17 +1,16 @@
 package net.sf.jett.transform;
 
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.model.Block;
 import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.tag.TagContext;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.Map;
 
 /**
  * A <code>BlockTransformer</code> knows how to transform a <code>Block</code>

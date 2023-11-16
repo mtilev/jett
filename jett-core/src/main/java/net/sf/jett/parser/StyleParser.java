@@ -1,21 +1,12 @@
 package net.sf.jett.parser;
 
+import net.sf.jett.exception.StyleParseException;
+import net.sf.jett.model.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
-import net.sf.jett.exception.StyleParseException;
-import net.sf.jett.model.Alignment;
-import net.sf.jett.model.BorderType;
-import net.sf.jett.model.FontBoldweight;
-import net.sf.jett.model.FontCharset;
-import net.sf.jett.model.FontTypeOffset;
-import net.sf.jett.model.FontUnderline;
-import net.sf.jett.model.FillPattern;
-import net.sf.jett.model.Style;
-import net.sf.jett.model.VerticalAlignment;
 
 /**
  * <p>A <code>StyleParser</code> parses "CSS" text, from beginning to end, in a
@@ -120,32 +111,32 @@ public class StyleParser
 
     /**
      * The property to specify horizontal alignment of the text.
-     * @see net.sf.jett.model.Alignment
+     * @see Alignment
      */
     public static final String PROPERTY_ALIGNMENT = "alignment";
     /**
      * The property to specify the type of all 4 borders.
-     * @see net.sf.jett.model.BorderType
+     * @see BorderType
      */
     public static final String PROPERTY_BORDER = "border";
     /**
      * The property to specify the type of the bottom border.
-     * @see net.sf.jett.model.BorderType
+     * @see BorderType
      */
     public static final String PROPERTY_BORDER_BOTTOM = "border-bottom";
     /**
      * The property to specify the type of the left border.
-     * @see net.sf.jett.model.BorderType
+     * @see BorderType
      */
     public static final String PROPERTY_BORDER_LEFT = "border-left";
     /**
      * The property to specify the type of the right border.
-     * @see net.sf.jett.model.BorderType
+     * @see BorderType
      */
     public static final String PROPERTY_BORDER_RIGHT = "border-right";
     /**
      * The property to specify the type of the top border.
-     * @see net.sf.jett.model.BorderType
+     * @see BorderType
      */
     public static final String PROPERTY_BORDER_TOP = "border-top";
     /**
@@ -196,7 +187,7 @@ public class StyleParser
     /**
      * The property to specify the fill pattern to be used with the fill
      * foreground color and the fill background color.
-     * @see net.sf.jett.model.FillPattern
+     * @see FillPattern
      */
     public static final String PROPERTY_FILL_PATTERN = "fill-pattern";
     /**
@@ -223,7 +214,7 @@ public class StyleParser
     public static final String PROPERTY_ROW_HEIGHT_IN_POINTS = "row-height-in-points";
     /**
      * The property to specify the vertical alignment of the text.
-     * @see net.sf.jett.model.VerticalAlignment
+     * @see VerticalAlignment
      */
     public static final String PROPERTY_VERTICAL_ALIGNMENT = "vertical-alignment";
     /**
@@ -237,7 +228,7 @@ public class StyleParser
     public static final String PROPERTY_FONT_BOLDWEIGHT = "font-weight";
     /**
      * The property to specify the charset used by the font.
-     * @see net.sf.jett.model.FontCharset
+     * @see FontCharset
      */
     public static final String PROPERTY_FONT_CHARSET = "font-charset";
     /**
@@ -264,12 +255,12 @@ public class StyleParser
     /**
      * The property to specify whether the font type is offset, and if it is,
      * whether it's superscript or subscript.
-     * @see net.sf.jett.model.FontTypeOffset
+     * @see FontTypeOffset
      */
     public static final String PROPERTY_FONT_TYPE_OFFSET = "font-type-offset";
     /**
      * The property to specify how the font text is underlined.
-     * @see net.sf.jett.model.FontUnderline
+     * @see FontUnderline
      */
     public static final String PROPERTY_FONT_UNDERLINE = "font-underline";
 
@@ -479,325 +470,225 @@ public class StyleParser
         logger.debug("property: {}, value: {}", property, value);
         // Case insensitive property names and values.
         property = property.toLowerCase();
-        value = value.trim().toUpperCase();
+        value = value == null ? value : value.trim().toUpperCase();
         // Try for descending order of popularity.  This order should match
         // the order of properties in examineAndApplyStyle(), but if it
         // doesn't match, then nothing will break.
-        if (PROPERTY_FONT_BOLDWEIGHT.equals(property))
-        {
-            try
-            {
-                style.setFontBoldweight(FontBoldweight.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal font boldweight found: {}.  IllegalArgumentException caught: {}",
-                        value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_FONT_ITALIC.equals(property))
-        {
-            if (value != null)
-                style.setFontItalic(Boolean.valueOf(value));
-        }
-        else if (PROPERTY_FONT_COLOR.equals(property))
-        {
-            if (value != null)
-                style.setFontColor(value);
-        }
-        else if (PROPERTY_FONT_NAME.equals(property))
-        {
-            if (value != null)
-                style.setFontName(value);
-        }
-        else if (PROPERTY_FONT_HEIGHT_IN_POINTS.equals(property))
-        {
-            try
-            {
-                style.setFontHeightInPoints(Short.valueOf(value));
-            }
-            catch (NumberFormatException e)
-            {
-                logger.debug("Illegal font height in points: {}.  NumberFormatException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_ALIGNMENT.equals(property))
-        {
-            try
-            {
-                style.setAlignment(Alignment.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal property alignment: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_BORDER.equals(property))
-        {
-            try
-            {
-                BorderType bt = BorderType.valueOf(value);
-                style.setBorderBottomType(bt);
-                style.setBorderLeftType(bt);
-                style.setBorderRightType(bt);
-                style.setBorderTopType(bt);
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal border type: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_DATA_FORMAT.equals(property))
-        {
-            if (value != null)
-            {
-                style.setDataFormat(value);
-            }
-        }
-        else if (PROPERTY_FONT_UNDERLINE.equals(property))
-        {
-            try
-            {
-                style.setFontUnderline(FontUnderline.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal font underline type: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_FONT_STRIKEOUT.equals(property))
-        {
-            if (value != null)
-                style.setFontStrikeout(Boolean.valueOf(value));
-        }
-        else if (PROPERTY_WRAP_TEXT.equals(property))
-        {
-            if (value != null)
-                style.setWrappingText(Boolean.valueOf(value));
-        }
-        else if (PROPERTY_FILL_BACKGROUND_COLOR.equals(property))
-        {
-            if (value != null)
-                style.setFillBackgroundColor(value);
-        }
-        else if (PROPERTY_FILL_FOREGROUND_COLOR.equals(property))
-        {
-            if (value != null)
-                style.setFillForegroundColor(value);
-        }
-        else if (PROPERTY_FILL_PATTERN.equals(property))
-        {
-            try
-            {
-                style.setFillPatternType(FillPattern.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal fill pattern: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_VERTICAL_ALIGNMENT.equals(property))
-        {
-            try
-            {
-                style.setVerticalAlignment(VerticalAlignment.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal vertical alignment: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_INDENTION.equals(property))
-        {
-            try
-            {
-                style.setIndention(Short.valueOf(value));
-            }
-            catch (NumberFormatException e)
-            {
-                logger.debug("Illegal property indention: {}.  NumberFormatException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_ROTATION.equals(property))
-        {
-            if (ROTATION_STACKED.equals(value))
-            {
-                style.setRotationDegrees(POI_ROTATION_STACKED);
-            }
-            else
-            {
-                try
-                {
-                    style.setRotationDegrees(Short.valueOf(value));
-                }
-                catch (NumberFormatException e)
-                {
-                    logger.debug("Illegal property rotation: {}.  NumberFormatException caught: {}", value,  e.getMessage());
-                }
-            }
-        }
-        else if (PROPERTY_COLUMN_WIDTH_IN_CHARS.equals(property))
-        {
-            try
-            {
-                double width = Double.parseDouble(value);
-                style.setColumnWidth((int) Math.round(256 * width));
-            }
-            catch (NumberFormatException e)
-            {
-                logger.debug("Illegal column width in chars: {}.  NumberFormatException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_ROW_HEIGHT_IN_POINTS.equals(property))
-        {
-            try
-            {
-                double height = Double.parseDouble(value);
-                style.setRowHeight((short) Math.round(20 * height));
-            }
-            catch (NumberFormatException e)
-            {
-                logger.debug("Illegal row height in points: {}.  NumberFormatException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_BORDER_COLOR.equals(property))
-        {
-            try
-            {
-                style.setBorderBottomColor(value);
-                style.setBorderLeftColor(value);
-                style.setBorderRightColor(value);
-                style.setBorderTopColor(value);
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal border color: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_FONT_CHARSET.equals(property))
-        {
-            try
-            {
-                style.setFontCharset(FontCharset.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal font charset: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_FONT_TYPE_OFFSET.equals(property))
-        {
-            try
-            {
-                style.setFontTypeOffset(FontTypeOffset.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal font type offset: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_LOCKED.equals(property))
-        {
-            if (value != null)
-                style.setLocked(Boolean.valueOf(value));
-        }
-        else if (PROPERTY_HIDDEN.equals(property))
-        {
-            if (value != null)
-                style.setHidden(Boolean.valueOf(value));
-        }
-        else if (PROPERTY_BORDER_BOTTOM.equals(property))
-        {
-            try
-            {
-                style.setBorderBottomType(BorderType.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal border bottom: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_BORDER_LEFT.equals(property))
-        {
-            try
-            {
-                style.setBorderLeftType(BorderType.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal border left: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_BORDER_RIGHT.equals(property))
-        {
-            try
-            {
-                style.setBorderRightType(BorderType.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal border right: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_BORDER_TOP.equals(property))
-        {
-            try
-            {
-                style.setBorderTopType(BorderType.valueOf(value));
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal border top: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_BOTTOM_BORDER_COLOR.equals(property))
-        {
-            try
-            {
-                if (value != null)
-                    style.setBorderBottomColor(value);
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal border color: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_LEFT_BORDER_COLOR.equals(property))
-        {
-            try
-            {
-                if (value != null)
-                    style.setBorderLeftColor(value);
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal left border color: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_RIGHT_BORDER_COLOR.equals(property))
-        {
-            try
-            {
-                if (value != null)
-                    style.setBorderRightColor(value);
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal right border color: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
-        else if (PROPERTY_TOP_BORDER_COLOR.equals(property))
-        {
-            try
-            {
-                if (value != null)
-                    style.setBorderTopColor(value);
-            }
-            catch (IllegalArgumentException e)
-            {
-                logger.debug("Illegal top border color: {}.  IllegalArgumentException caught: ", value, e.getMessage());
-            }
-        }
+		switch (property) {
+			case PROPERTY_FONT_BOLDWEIGHT:
+				try {
+					style.setFontBoldweight(FontBoldweight.parse(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal font boldweight found: {}.  IllegalArgumentException caught: {}",
+							value, e.getMessage());
+				}
+				break;
+			case PROPERTY_FONT_ITALIC:
+				if (value != null)
+					style.setFontItalic(Boolean.valueOf(value));
+				break;
+			case PROPERTY_FONT_COLOR:
+				if (value != null)
+					style.setFontColor(value);
+				break;
+			case PROPERTY_FONT_NAME:
+				if (value != null)
+					style.setFontName(value);
+				break;
+			case PROPERTY_FONT_HEIGHT_IN_POINTS:
+				try {
+					style.setFontHeightInPoints(Short.valueOf(value));
+				} catch (NumberFormatException e) {
+					logger.debug("Illegal font height in points: {}.  NumberFormatException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_ALIGNMENT:
+				try {
+					style.setAlignment(Alignment.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal property alignment: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_BORDER:
+				try {
+					BorderType bt = BorderType.valueOf(value);
+					style.setBorderBottomType(bt);
+					style.setBorderLeftType(bt);
+					style.setBorderRightType(bt);
+					style.setBorderTopType(bt);
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal border type: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_DATA_FORMAT:
+				if (value != null) {
+					style.setDataFormat(value);
+				}
+				break;
+			case PROPERTY_FONT_UNDERLINE:
+				try {
+					style.setFontUnderline(FontUnderline.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal font underline type: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_FONT_STRIKEOUT:
+				if (value != null)
+					style.setFontStrikeout(Boolean.valueOf(value));
+				break;
+			case PROPERTY_WRAP_TEXT:
+				if (value != null)
+					style.setWrappingText(Boolean.valueOf(value));
+				break;
+			case PROPERTY_FILL_BACKGROUND_COLOR:
+				if (value != null)
+					style.setFillBackgroundColor(value);
+				break;
+			case PROPERTY_FILL_FOREGROUND_COLOR:
+				if (value != null)
+					style.setFillForegroundColor(value);
+				break;
+			case PROPERTY_FILL_PATTERN:
+				try {
+					style.setFillPatternType(FillPattern.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal fill pattern: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_VERTICAL_ALIGNMENT:
+				try {
+					style.setVerticalAlignment(VerticalAlignment.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal vertical alignment: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_INDENTION:
+				try {
+					style.setIndention(Short.valueOf(value));
+				} catch (NumberFormatException e) {
+					logger.debug("Illegal property indention: {}.  NumberFormatException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_ROTATION:
+				if (ROTATION_STACKED.equals(value)) {
+					style.setRotationDegrees(POI_ROTATION_STACKED);
+				} else {
+					try {
+						style.setRotationDegrees(Short.valueOf(value));
+					} catch (NumberFormatException e) {
+						logger.debug("Illegal property rotation: {}.  NumberFormatException caught: {}", value, e.getMessage());
+					}
+				}
+				break;
+			case PROPERTY_COLUMN_WIDTH_IN_CHARS:
+				try {
+					double width = Double.parseDouble(value);
+					style.setColumnWidth((int) Math.round(256 * width));
+				} catch (NumberFormatException e) {
+					logger.debug("Illegal column width in chars: {}.  NumberFormatException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_ROW_HEIGHT_IN_POINTS:
+				try {
+					double height = Double.parseDouble(value);
+					style.setRowHeight((short) Math.round(20 * height));
+				} catch (NumberFormatException e) {
+					logger.debug("Illegal row height in points: {}.  NumberFormatException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_BORDER_COLOR:
+				try {
+					style.setBorderBottomColor(value);
+					style.setBorderLeftColor(value);
+					style.setBorderRightColor(value);
+					style.setBorderTopColor(value);
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal border color: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_FONT_CHARSET:
+				try {
+					style.setFontCharset(FontCharset.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal font charset: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_FONT_TYPE_OFFSET:
+				try {
+					style.setFontTypeOffset(FontTypeOffset.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal font type offset: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_LOCKED:
+				if (value != null)
+					style.setLocked(Boolean.valueOf(value));
+				break;
+			case PROPERTY_HIDDEN:
+				if (value != null)
+					style.setHidden(Boolean.valueOf(value));
+				break;
+			case PROPERTY_BORDER_BOTTOM:
+				try {
+					style.setBorderBottomType(BorderType.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal border bottom: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_BORDER_LEFT:
+				try {
+					style.setBorderLeftType(BorderType.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal border left: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_BORDER_RIGHT:
+				try {
+					style.setBorderRightType(BorderType.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal border right: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_BORDER_TOP:
+				try {
+					style.setBorderTopType(BorderType.valueOf(value));
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal border top: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_BOTTOM_BORDER_COLOR:
+				try {
+					if (value != null)
+						style.setBorderBottomColor(value);
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal border color: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_LEFT_BORDER_COLOR:
+				try {
+					if (value != null)
+						style.setBorderLeftColor(value);
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal left border color: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_RIGHT_BORDER_COLOR:
+				try {
+					if (value != null)
+						style.setBorderRightColor(value);
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal right border color: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+			case PROPERTY_TOP_BORDER_COLOR:
+				try {
+					if (value != null)
+						style.setBorderTopColor(value);
+				} catch (IllegalArgumentException e) {
+					logger.debug("Illegal top border color: {}.  IllegalArgumentException caught: {}", value, e.getMessage());
+				}
+				break;
+		}
     }
 
     /**

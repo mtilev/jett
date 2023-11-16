@@ -1,10 +1,5 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.Block;
 import net.sf.jett.model.WorkbookContext;
@@ -15,6 +10,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.*;
 
 /**
  * <p>A <code>SetTag</code> has no direct effect on the resultant spreadsheet.
@@ -53,7 +50,7 @@ public class SetTag extends BaseTag
     private static final List<String> REQ_ATTRS =
             new ArrayList<>(Arrays.asList(ATTR_VAR, ATTR_VALUE));
     private static final List<String> OPT_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_DISPLAY));
+            new ArrayList<>(Collections.singletonList(ATTR_DISPLAY));
 
     private String myVarName;
     private Object myValue;

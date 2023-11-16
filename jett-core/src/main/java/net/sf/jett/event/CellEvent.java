@@ -1,8 +1,8 @@
 package net.sf.jett.event;
 
-import java.util.Map;
-
 import org.apache.poi.ss.usermodel.Cell;
+
+import java.util.Map;
 
 /**
  * A <code>CellEvent</code> represents data associated with a "cell processed"
@@ -14,10 +14,10 @@ import org.apache.poi.ss.usermodel.Cell;
  */
 public class CellEvent
 {
-    private Cell myCell;
-    private Map<String, Object> myBeans;
-    private Object myOldValue;
-    private Object myNewValue;
+    private final Cell myCell;
+    private final Map<String, Object> myBeans;
+    private final Object myOldValue;
+    private final Object myNewValue;
 
     /**
      * Creates a <code>CellEvent</code>.

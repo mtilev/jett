@@ -1,37 +1,21 @@
 package net.sf.jett.transform;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-
 import net.sf.jett.exception.MetadataParseException;
 import net.sf.jett.expression.Expression;
-import net.sf.jett.model.BaseLoopTagStatus;
-import net.sf.jett.model.HashMapWrapper;
-import net.sf.jett.model.MissingCloneSheetProperties;
-import net.sf.jett.model.PastEndValue;
-import net.sf.jett.model.WorkbookContext;
+import net.sf.jett.model.*;
 import net.sf.jett.parser.MetadataParser;
 import net.sf.jett.parser.SheetNameMetadataParser;
 import net.sf.jett.tag.NameTag;
 import net.sf.jett.util.FormulaUtil;
 import net.sf.jett.util.RichTextStringUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * A <code>SheetCloner</code> clone sheets and can set them up for implicit
@@ -48,14 +32,14 @@ public class SheetCloner
     /**
      * Determines the beginning of metadata text inside sheet names only.  It's
      * different from the beginning of metadata text inside normal cells
-     * ({@link net.sf.jett.transform.CollectionsTransformer#BEGIN_METADATA})
+     * ({@link CollectionsTransformer#BEGIN_METADATA})
      * because the normal cells beginning of metadata contains a character that
      * isn't allowed in Excel sheet names.
      */
     public static final String BEGIN_METADATA = "$@";
 
-    private Workbook myWorkbook;
-    private List<MissingCloneSheetProperties> myMissingPropertiesList;
+    private final Workbook myWorkbook;
+    private final List<MissingCloneSheetProperties> myMissingPropertiesList;
 
     /**
      * Constructs an <code>SheetCloner</code> that will work on cloning
@@ -264,11 +248,10 @@ public class SheetCloner
      */
     private void cloneNamedRanges(Workbook workbook, int prevIndex)
     {
-        int numNamedRanges = workbook.getNumberOfNames();
+        final List<? extends Name> namedRanges = workbook.getAllNames();
         int clonedSheetIndex = workbook.getNumberOfSheets() - 1;
-        for (int i = 0; i < numNamedRanges; i++)
+        for (final Name name : namedRanges)
         {
-            Name name = workbook.getNameAt(i);
             // Avoid copying Excel's "built-in" (and hidden) named ranges.
             if (name.getSheetIndex() == prevIndex && !NameTag.EXCEL_BUILT_IN_NAMES.contains(name.getNameName()))
             {
@@ -299,10 +282,9 @@ public class SheetCloner
     {
         if (fromIndex != toIndex)
         {
-            int numNamedRanges = workbook.getNumberOfNames();
-            for (int i = 0; i < numNamedRanges; i++)
+            final List<? extends Name> namedRanges = workbook.getAllNames();
+            for (final Name name : namedRanges)
             {
-                Name name = workbook.getNameAt(i);
                 int scopeIndex = name.getSheetIndex();
                 if (scopeIndex == fromIndex)
                 {
@@ -405,7 +387,7 @@ public class SheetCloner
         {
             if (myMissingPropertiesList.size() < index)
             {
-                myMissingPropertiesList.addAll(Collections.<MissingCloneSheetProperties>nCopies(index, null));
+                myMissingPropertiesList.addAll(Collections.nCopies(index, null));
             }
             myMissingPropertiesList.add(getMissingCloneSheetProperties(myWorkbook.getSheetAt(index)));
         }

@@ -1,25 +1,19 @@
 package net.sf.jett.util;
 
+import net.sf.jett.expression.Expression;
+import net.sf.jett.model.CellStyleCache;
+import net.sf.jett.model.FontCache;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-
-import net.sf.jett.expression.Expression;
-import net.sf.jett.model.CellStyleCache;
-import net.sf.jett.model.FontCache;
 
 /**
  * The <code>RichTextStringUtil</code> utility class provides methods for
@@ -122,7 +116,7 @@ public class RichTextStringUtil
                                             CreationHelper helper, String target, String replacement, boolean firstOnly, int startIdx,
                                             boolean identifierMode)
     {
-        if (target == null || target.length() == 0)
+        if (target == null || target.isEmpty())
             return richTextString;
 
         int numFormattingRuns = richTextString.numFormattingRuns();
@@ -197,7 +191,7 @@ public class RichTextStringUtil
     public static RichTextString replaceValues(RichTextString richTextString,
                                                CreationHelper helper, List<String> targets, List<String> replacements, boolean replaceAll)
     {
-        if (targets == null || targets.size() == 0)
+        if (targets == null || targets.isEmpty())
             return richTextString;
 
         int numFormattingRuns = richTextString.numFormattingRuns();
@@ -372,7 +366,7 @@ public class RichTextStringUtil
      * @param richTextString The <code>RichTextString</code>.
      * @return A <code>List</code> of all <code>FormattingRun</code>s found.
      */
-    public static List<FormattingRun> determineFormattingRunStats(RichTextString richTextString)
+    static List<FormattingRun> determineFormattingRunStats(RichTextString richTextString)
     {
         int numFormattingRuns = richTextString.numFormattingRuns();
         List<FormattingRun> formattingRuns = new ArrayList<>(numFormattingRuns);
@@ -448,7 +442,7 @@ public class RichTextStringUtil
      *    <code>richTextString</code>, with <code>value</code> as it contents,
      *    formatted as specified.
      */
-    public static RichTextString createFormattedString(int numFormattingRuns,
+    static RichTextString createFormattedString(int numFormattingRuns,
                                                        CreationHelper helper, String value, List<FormattingRun> formattingRuns)
     {
         // Construct the proper RichTextString.
@@ -464,7 +458,7 @@ public class RichTextStringUtil
      * @param numFormattingRuns The number of formatting runs.
      * @param formattingRuns A <code>List</code> of <code>FormattingRuns</code>.
      */
-    public static void formatString(RichTextString string, int numFormattingRuns,
+    static void formatString(RichTextString string, int numFormattingRuns,
                                     List<FormattingRun> formattingRuns)
     {
         // Apply the formatting runs.
@@ -725,7 +719,7 @@ class FormattingRun
 {
     private int myBeginIdx;
     private int myLength;
-    private Object myFont;
+    private final Object myFont;
 
     /**
      * Construct a <code>FormattingRun</code> with

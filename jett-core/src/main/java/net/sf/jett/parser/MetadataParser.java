@@ -1,11 +1,10 @@
 package net.sf.jett.parser;
 
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.Cell;
-
 import net.sf.jett.exception.MetadataParseException;
 import net.sf.jett.util.SheetUtil;
+import org.apache.poi.ss.usermodel.Cell;
+
+import java.util.Map;
 
 /**
  * A <code>MetadataParser</code> parses metadata at the end of cell text.

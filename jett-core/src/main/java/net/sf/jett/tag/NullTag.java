@@ -1,17 +1,16 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.model.Block;
 import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.SheetUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>A <code>NullTag</code> does nothing to its <code>Block</code> except mark
@@ -32,7 +31,7 @@ public class NullTag extends BaseTag
      */
     public static final String ATTR_TEXT = "text";
     private static final List<String> REQ_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_TEXT));
+            new ArrayList<>(Collections.singletonList(ATTR_TEXT));
 
     /**
      * Returns this <code>Tag's</code> name.

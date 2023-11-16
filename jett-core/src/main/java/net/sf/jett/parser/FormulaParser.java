@@ -1,16 +1,15 @@
 package net.sf.jett.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.Cell;
-
 import net.sf.jett.exception.FormulaParseException;
 import net.sf.jett.formula.CellRef;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * A <code>FormulaParser</code> parses formulas in formula text, extracting out
@@ -100,7 +99,7 @@ public class FormulaParser
         if (token == FormulaScanner.Token.TOKEN_WHITESPACE)
             token = scanner.getNextToken();
 
-        // Parse any cell references found.
+        // Parse any found cell references.
         while (token.getCode() >= 0 && token != FormulaScanner.Token.TOKEN_EOI)
         {
             switch(token)
@@ -169,6 +168,9 @@ public class FormulaParser
                 break;
             case TOKEN_SINGLE_QUOTE:
                 // Must keep track of whether a sheet reference occurs within single quotes.
+                if (amIInsideSingleQuotes) {
+                    myCellReference = "'" + myCellReference + "'";
+                }
                 amIInsideSingleQuotes = !amIInsideSingleQuotes;
                 break;
             case TOKEN_DOUBLE_PIPE:

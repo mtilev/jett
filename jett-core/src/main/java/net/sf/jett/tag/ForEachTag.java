@@ -1,17 +1,5 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.RichTextString;
-
 import net.sf.jagg.AggregateFunction;
 import net.sf.jagg.Aggregations;
 import net.sf.jagg.Aggregator;
@@ -24,6 +12,11 @@ import net.sf.jett.model.Group;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.GroupOrderByComparator;
 import net.sf.jett.util.OrderByComparator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.util.*;
 
 /**
  * <p>A <code>ForEachTag</code> represents a repetitively placed
@@ -195,7 +188,7 @@ public class ForEachTag extends BaseLoopTag
             myCollection = newCollection;
         }
 
-        List<String> orderByProperties = AttributeUtil.evaluateList(this, attributes.get(ATTR_ORDER_BY), beans, new ArrayList<String>(0));
+        List<String> orderByProperties = AttributeUtil.evaluateList(this, attributes.get(ATTR_ORDER_BY), beans, new ArrayList<>(0));
         OrderByComparator<Object> comp = null;
         if (!orderByProperties.isEmpty())
         {
@@ -203,7 +196,7 @@ public class ForEachTag extends BaseLoopTag
             sortTheCollection(comp);
         }
 
-        myGroupByProperties = AttributeUtil.evaluateList(this, attributes.get(ATTR_GROUP_BY), beans, new ArrayList<String>(0));
+        myGroupByProperties = AttributeUtil.evaluateList(this, attributes.get(ATTR_GROUP_BY), beans, new ArrayList<>(0));
         if (!myGroupByProperties.isEmpty())
         {
             List<Group> groups = groupTheCollection();
@@ -211,7 +204,7 @@ public class ForEachTag extends BaseLoopTag
             {
                 sortTheGroups(groups, comp);
             }
-            myCollection = new ArrayList<Object>(groups);
+            myCollection = new ArrayList<>(groups);
         }
 
         myLimit = AttributeUtil.evaluateNonNegativeInt(this, attributes.get(ATTR_LIMIT), beans, ATTR_LIMIT, myCollection.size());
@@ -227,7 +220,7 @@ public class ForEachTag extends BaseLoopTag
     @Override
     protected List<String> getCollectionNames()
     {
-        return Arrays.asList(myCollectionName);
+        return Collections.singletonList(myCollectionName);
     }
 
     /**
@@ -239,7 +232,7 @@ public class ForEachTag extends BaseLoopTag
     @Override
     protected List<String> getVarNames()
     {
-        return Arrays.asList(myVarName);
+        return Collections.singletonList(myVarName);
     }
 
     /**
@@ -290,7 +283,7 @@ public class ForEachTag extends BaseLoopTag
         logger.debug("beforeBP: index={}", index);
 
         // Optional index counter variable.
-        if (myIndexVarName != null && myIndexVarName.length() > 0)
+        if (myIndexVarName != null && !myIndexVarName.isEmpty())
             beans.put(myIndexVarName, index);
     }
 
@@ -309,7 +302,7 @@ public class ForEachTag extends BaseLoopTag
         beans.remove(myVarName);
 
         // Optional index counter variable.
-        if (myIndexVarName != null && myIndexVarName.length() > 0)
+        if (myIndexVarName != null && !myIndexVarName.isEmpty())
             beans.remove(myIndexVarName);
     }
 
@@ -324,12 +317,12 @@ public class ForEachTag extends BaseLoopTag
     {
         if (myCollection instanceof List)
         {
-            Collections.sort((List<Object>) myCollection, comp);
+            ((List<Object>) myCollection).sort(comp);
         }
         else
         {
             List<Object> temp = new ArrayList<>(myCollection);
-            Collections.sort(temp, comp);
+            temp.sort(comp);
             myCollection = temp;
         }
     }
@@ -342,7 +335,7 @@ public class ForEachTag extends BaseLoopTag
     private void sortTheGroups(List<Group> groups, OrderByComparator<Object> comp)
     {
         GroupOrderByComparator<Group> gComp = new GroupOrderByComparator<>(comp, myGroupByProperties);
-        Collections.sort(groups, gComp);
+        groups.sort(gComp);
     }
 
     /**
@@ -355,10 +348,10 @@ public class ForEachTag extends BaseLoopTag
     private List<Group> groupTheCollection()
     {
         List<Object> items = new ArrayList<>(myCollection);
-        List<AggregateFunction> aggregators = Arrays.<AggregateFunction>asList(new CollectAggregator(Aggregator.PROP_SELF));
+        List<AggregateFunction> aggregators = Collections.singletonList(new CollectAggregator(Aggregator.PROP_SELF));
         List<AggregateValue<Object>> aggValues = Aggregations.groupBy(items, myGroupByProperties, aggregators);
         List<Group> groups = new ArrayList<>(aggValues.size());
-        for (AggregateValue aggValue : aggValues)
+        for (AggregateValue<?> aggValue : aggValues)
         {
             Group g = new Group();
             g.setItems((List<?>) aggValue.getAggregateValue(0));
@@ -376,7 +369,7 @@ public class ForEachTag extends BaseLoopTag
     private class ForEachTagIterator implements Iterator<Object>
     {
         private int myIndex;
-        private Iterator<Object> myInternalIterator;
+        private final Iterator<Object> myInternalIterator;
 
         /**
          * Construct a <code>ForEachTagIterator</code> whose index is initialized

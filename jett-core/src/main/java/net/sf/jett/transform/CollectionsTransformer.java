@@ -1,19 +1,5 @@
 package net.sf.jett.transform;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.expression.Expression;
 import net.sf.jett.expression.ExpressionFactory;
@@ -26,6 +12,11 @@ import net.sf.jett.tag.MultiForEachTag;
 import net.sf.jett.tag.TagContext;
 import net.sf.jett.util.RichTextStringUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.*;
+
+import java.util.*;
 
 /**
  * A <code>CollectionsTransformer</code> knows how to perform implicit
@@ -149,7 +140,7 @@ public class CollectionsTransformer
             }
         }
         Block containingBlock = new Block(parentBlock, left, right, top, bottom);
-        logger.debug("Impl MultiForEach Block: {}");
+        logger.debug("Impl MultiForEach Block: {}", containingBlock);
 
         // Find all Collection names in the Block.
         List<String> collectionNames = findCollectionsInBlock(cell, containingBlock,
@@ -384,13 +375,12 @@ public class CollectionsTransformer
 
         Row startRow = startTag.getRow();
         int startCellNum = startColumnIndex;
-        int endCellNum = right;
-        for (int cellNum = startCellNum; cellNum <= endCellNum; cellNum++)
+		for (int cellNum = startCellNum; cellNum <= right; cellNum++)
         {
             logger.trace("  Trying same row: row {}, col {}", startRowIndex, cellNum);
             // First, check remaining Cells in the same row.
             Cell cell = startRow.getCell(cellNum);
-            if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
+            if (cell != null && cell.getCellType() == CellType.STRING)
             {
                 RichTextString richString = cell.getRichStringCellValue();
                 List<String> collExprs = Expression.getImplicitCollectionExpr(richString.toString(),
@@ -413,11 +403,10 @@ public class CollectionsTransformer
             if (row != null)
             {
                 startCellNum = left;
-                endCellNum = right;
-                for (int cellNum = startCellNum; cellNum <= endCellNum; cellNum++)
+				for (int cellNum = startCellNum; cellNum <= right; cellNum++)
                 {
                     Cell cell = row.getCell(cellNum);
-                    if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
+                    if (cell != null && cell.getCellType() == CellType.STRING)
                     {
                         RichTextString richString = cell.getRichStringCellValue();
                         List<String> collExprs = Expression.getImplicitCollectionExpr(richString.toString(),

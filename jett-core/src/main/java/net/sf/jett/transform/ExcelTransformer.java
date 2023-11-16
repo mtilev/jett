@@ -1,33 +1,11 @@
 package net.sf.jett.transform;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-
 import net.sf.jett.event.CellListener;
 import net.sf.jett.event.SheetListener;
 import net.sf.jett.expression.Expression;
 import net.sf.jett.expression.ExpressionFactory;
 import net.sf.jett.formula.CellRef;
 import net.sf.jett.formula.Formula;
-//import net.sf.jett.lwxssf.LWXSSFWorkbook;
 import net.sf.jett.model.CellStyleCache;
 import net.sf.jett.model.FontCache;
 import net.sf.jett.model.Style;
@@ -37,6 +15,21 @@ import net.sf.jett.tag.JtTagLibrary;
 import net.sf.jett.tag.TagLibrary;
 import net.sf.jett.tag.TagLibraryRegistry;
 import net.sf.jett.util.FormulaUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>The <code>ExcelTransformer</code> class represents the main JETT API.</p>
@@ -99,16 +92,16 @@ public class ExcelTransformer
 {
     private static final Logger logger = LogManager.getLogger();
 
-    private TagLibraryRegistry myRegistry;
-    private List<CellListener> myCellListeners;
-    private List<SheetListener> mySheetListeners;
-    private List<String> myFixedSizeCollectionNames;
-    private List<String> myNoImplicitProcessingCollectionNames;
-    private Map<String, Style> myStyleMap;
+    private final TagLibraryRegistry myRegistry;
+    private final List<CellListener> myCellListeners;
+    private final List<SheetListener> mySheetListeners;
+    private final List<String> myFixedSizeCollectionNames;
+    private final List<String> myNoImplicitProcessingCollectionNames;
+    private final Map<String, Style> myStyleMap;
     private boolean amIEvaluatingFormulas;
     private boolean amIForcingRecalculationOnOpening;
     private boolean amIChangingForcingRecalculation;
-    private ExpressionFactory myExpressionFactory;
+    private final ExpressionFactory myExpressionFactory;
 
     /**
      * Construct an <code>ExcelTransformer</code>.
@@ -436,7 +429,7 @@ public class ExcelTransformer
     {
         logger.info("Transforming file \"{}\" into file \"{}\" with Sheet Specific Beans.", inFilename, outFilename);
         try (FileOutputStream fileOut = new FileOutputStream(outFilename);
-             InputStream fileIn = new BufferedInputStream(new FileInputStream(inFilename)))
+             InputStream fileIn = new BufferedInputStream(Files.newInputStream(Paths.get(inFilename))))
         {
             Workbook workbook = transform(fileIn, templateSheetNamesList, newSheetNamesList, beansList);
             workbook.write(fileOut);
@@ -569,7 +562,7 @@ public class ExcelTransformer
      */
     public WorkbookContext createContext(Workbook workbook, SheetTransformer transformer)
     {
-        return createContext(workbook, transformer, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<Map<String, Object>>());
+        return createContext(workbook, transformer, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     /**
@@ -719,7 +712,7 @@ public class ExcelTransformer
         }
         // Replaced named range formulas that had JETT formulas present in the
         // formula map.
-        int numNamedRanges = workbook.getNumberOfNames();
+        final List<? extends Name> namedRanges = workbook.getAllNames();
         for (String key : formulaMap.keySet())
         {
             // Look for a "?", which must be present in the keys for all formulas
@@ -741,15 +734,14 @@ public class ExcelTransformer
             String scopeSheetName = key.substring(questionMark + 1);
 
             int sheetScopeIndex = -1; // workbook scope
-            if (scopeSheetName != null && scopeSheetName.length() > 0)
+            if (!scopeSheetName.isEmpty())
             {
                 sheetScopeIndex = workbook.getSheetIndex(scopeSheetName);
             }
 
             Name namedRange = null;
-            for (int i = 0; i < numNamedRanges; i++)
+            for (final Name n : namedRanges)
             {
-                Name n = workbook.getNameAt(i);
                 if (n.getNameName().equals(namedRangeName) &&
                         n.getSheetIndex() == sheetScopeIndex)
                 {
@@ -768,7 +760,7 @@ public class ExcelTransformer
 
                     logger.debug("  For named range {}, scope {}, mapped to {}" +
                                     ", replacing formula \"{}\" with \"{}\".",
-                            namedRangeName, "".equals(scopeSheetName) ? "workbook" : ("\"" + scopeSheetName + "\""),
+                            namedRangeName, scopeSheetName.isEmpty() ? "workbook" : ("\"" + scopeSheetName + "\""),
                             formula, formula.getFormulaText(), excelFormula);
 
                     namedRange.setRefersToFormula(excelFormula);

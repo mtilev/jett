@@ -1,9 +1,9 @@
 package net.sf.jett.event;
 
-import java.util.Map;
-
 import net.sf.jett.model.Block;
 import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.Map;
 
 /**
  * A <code>TagLoopEvent</code> represents data associated with a "tag loop
@@ -16,7 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet;
  */
 public class TagLoopEvent extends TagEvent
 {
-    private int myLoopIndex;
+    private final int myLoopIndex;
 
     /**
      * Constructs a <code>TagLoopEvent</code> built using the given

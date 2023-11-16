@@ -1,8 +1,8 @@
 package net.sf.jett.event;
 
-import java.util.Map;
-
 import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.Map;
 
 /**
  * A <code>SheetEvent</code> represents data associated with a "sheet
@@ -15,8 +15,8 @@ import org.apache.poi.ss.usermodel.Sheet;
  */
 public class SheetEvent
 {
-    private Sheet mySheet;
-    private Map<String, Object> myBeans;
+    private final Sheet mySheet;
+    private final Map<String, Object> myBeans;
 
     /**
      * Creates a <code>SheetEvent</code>.

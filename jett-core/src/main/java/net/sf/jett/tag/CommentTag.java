@@ -1,27 +1,16 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.Block;
 import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+
+import java.util.*;
 
 /**
  * <p>A <code>CommentTag</code> represents a Cell that needs to have an Excel
@@ -73,7 +62,7 @@ public class CommentTag extends BaseTag
     private static final List<String> REQ_ATTRS =
             new ArrayList<>(Arrays.asList(ATTR_VALUE, ATTR_AUTHOR, ATTR_COMMENT));
     private static final List<String> OPT_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_VISIBLE));
+            new ArrayList<>(Collections.singletonList(ATTR_VISIBLE));
 
     private RichTextString myValue;
     private RichTextString myAuthor;
@@ -118,7 +107,6 @@ public class CommentTag extends BaseTag
      * Validates the attributes for this <code>Tag</code>.  This tag must be
      * bodiless.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void validateAttributes() throws TagParseException
     {
@@ -158,7 +146,7 @@ public class CommentTag extends BaseTag
         WorkbookContext workbookContext = getWorkbookContext();
         SheetUtil.setCellValue(workbookContext, cell, myValue);
 
-        Drawing drawing = context.getOrCreateDrawing();
+        Drawing<?> drawing = context.getOrCreateDrawing();
         CreationHelper helper = sheet.getWorkbook().getCreationHelper();
         ClientAnchor anchor = helper.createClientAnchor();
 

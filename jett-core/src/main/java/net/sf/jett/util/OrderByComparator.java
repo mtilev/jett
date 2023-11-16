@@ -1,12 +1,13 @@
 package net.sf.jett.util;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import net.sf.jagg.exception.JaggException;
 import net.sf.jagg.util.MethodCache;
 import net.sf.jett.exception.ParseException;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>An <code>OrderByComparator</code> is a <code>Comparator</code> that is
@@ -106,17 +107,12 @@ public class OrderByComparator<T> implements Comparator<T>
                 if (parts.length == 2 || parts.length == 4)
                 {
                     // ordering is next.
-                    if (ASC.equalsIgnoreCase(parts[1]))
-                    {
-                        ordering = ORDER_ASC;
-                        nullOrdering = NULLS_LAST;
-                    }
-                    else if (DESC.equalsIgnoreCase(parts[1]))
+                    if (DESC.equalsIgnoreCase(parts[1]))
                     {
                         ordering = ORDER_DESC;
                         nullOrdering = NULLS_FIRST;
                     }
-                    else
+                    else if (!ASC.equalsIgnoreCase(parts[1]))
                         throw new ParseException("Expected \"" + ASC + "\" or \"" + DESC + ": " + expr);
                 }
                 if (parts.length == 3 || parts.length == 4)
@@ -171,18 +167,18 @@ public class OrderByComparator<T> implements Comparator<T>
             int ordering = myOrderings.get(i);
             int nullOrdering = myNullOrderings.get(i);
 
-            Comparable value1, value2;
+            Comparable<Object> value1, value2;
             // This had to be copied from Aggregator.java, because Aggregator's
             // static method "getValueFromProperty" is protected.
             // Otherwise, we could call "Aggregator.getValueFromProperty", which
-            // wraps all of the checked exceptions in an
+            // wraps all the checked exceptions in an
             // UnsupportedOperationException.
             MethodCache cache = MethodCache.getMethodCache();
             try
             {
-                value1 = (Comparable)
+                value1 = (Comparable<Object>)
                         cache.getValueFromProperty(o1, property);
-                value2 = (Comparable)
+                value2 = (Comparable<Object>)
                         cache.getValueFromProperty(o2, property);
             }
             catch (JaggException e)
@@ -229,16 +225,16 @@ public class OrderByComparator<T> implements Comparator<T>
     {
         if (obj instanceof OrderByComparator)
         {
-            OrderByComparator otherComp = (OrderByComparator) obj;
+            OrderByComparator<?> otherComp = (OrderByComparator<?>) obj;
             if (mySize != otherComp.mySize)
                 return false;
             for (int i = 0; i < mySize; i++)
             {
                 if (!myProperties.get(i).equals(otherComp.myProperties.get(i)))
                     return false;
-                if (myOrderings.get(i) != otherComp.myOrderings.get(i))
+                if (!Objects.equals(myOrderings.get(i), otherComp.myOrderings.get(i)))
                     return false;
-                if (myNullOrderings.get(i) != otherComp.myNullOrderings.get(i))
+                if (!Objects.equals(myNullOrderings.get(i), otherComp.myNullOrderings.get(i)))
                     return false;
             }
             return true;

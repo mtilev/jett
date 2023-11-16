@@ -1,12 +1,12 @@
 package net.sf.jett.expression;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sf.jagg.AggregateFunction;
 import net.sf.jagg.Aggregations;
 import net.sf.jagg.Aggregator;
 import net.sf.jagg.model.AggregateValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A <code>JaggFuncs</code> object is an object that represents jAgg aggregate

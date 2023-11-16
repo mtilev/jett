@@ -1,10 +1,9 @@
 package net.sf.jett.event;
 
-import java.util.Map;
-
+import net.sf.jett.model.Block;
 import org.apache.poi.ss.usermodel.Sheet;
 
-import net.sf.jett.model.Block;
+import java.util.Map;
 
 /**
  * A <code>TagEvent</code> represents data associated with a "tag processed"
@@ -17,9 +16,9 @@ import net.sf.jett.model.Block;
  */
 public class TagEvent
 {
-    private Sheet mySheet;
-    private Block myBlock;
-    private Map<String, Object> myBeans;
+    private final Sheet mySheet;
+    private final Block myBlock;
+    private final Map<String, Object> myBeans;
 
     /**
      * Constructs a <code>TagEvent</code> built using the given

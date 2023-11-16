@@ -1,11 +1,8 @@
 package net.sf.jett.test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -13,6 +10,8 @@ import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 import static org.junit.Assert.*;
@@ -55,6 +54,16 @@ public class AttributeUtilTest
         }
 
         @Override
+        public AreaReference createAreaReference(String reference) {
+            return null;
+        }
+
+        @Override
+        public AreaReference createAreaReference(CellReference topLeft, CellReference bottomRight) {
+            return null;
+        }
+
+        @Override
         public DataFormat createDataFormat()
         {
             return null;
@@ -67,7 +76,7 @@ public class AttributeUtilTest
         }
 
         @Override
-        public Hyperlink createHyperlink(int type)
+        public Hyperlink createHyperlink(HyperlinkType type)
         {
             return null;
         }
@@ -91,7 +100,7 @@ public class AttributeUtilTest
     @Before
     public void setup()
     {
-        myBeans = new HashMap<String, Object>();
+        myBeans = new HashMap<>();
         myBeans.put("t", true);
         myBeans.put("f", false);
         myBeans.put("answer", 42);
@@ -141,7 +150,7 @@ public class AttributeUtilTest
             {
                 WorkbookContext context = new WorkbookContext();
                 context.setExpressionFactory(new ExpressionFactory());
-                context.setTagLocationsMap(new HashMap<String, String>());
+                context.setTagLocationsMap(new HashMap<>());
                 return context;
             }
         };
@@ -493,10 +502,8 @@ public class AttributeUtilTest
     @Test
     public void testEvaluateList()
     {
-        Object obj = AttributeUtil.evaluateList(myTag, new XSSFRichTextString("${acronym}"), myBeans, null);
-        assertNotNull(obj);
-        assertTrue(obj instanceof List);
-        List list = (List) obj;
+        final List<String> list = AttributeUtil.evaluateList(myTag, new XSSFRichTextString("${acronym}"), myBeans, null);
+        assertNotNull(list);
         assertEquals(4, list.size());
     }
 
@@ -507,15 +514,13 @@ public class AttributeUtilTest
     //@SuppressWarnings("unchecked")
     public void testEvaluateListSemicolonSeparated()
     {
-        Object obj = AttributeUtil.evaluateList(myTag, new XSSFRichTextString("four;eight;fifteen;sixteen;twenty-three;forty-two"), myBeans, null);
-        assertNotNull(obj);
-        assertTrue(obj instanceof List);
-        List list = (List) obj;
+        final List<String> list = AttributeUtil.evaluateList(myTag, new XSSFRichTextString("four;eight;fifteen;sixteen;twenty-three;forty-two"), myBeans, null);
+        assertNotNull(list);
         assertEquals(6, list.size());
         List<String> expected = Arrays.asList("four", "eight", "fifteen", "sixteen", "twenty-three", "forty-two");
         for (int i = 0; i < expected.size(); i++)
         {
-            assertEquals(expected.get(i), list.get(i).toString());
+            assertEquals(expected.get(i), list.get(i));
         }
     }
 
@@ -526,7 +531,7 @@ public class AttributeUtilTest
     @Test(expected = AttributeExpressionException.class)
     public void testEvaluateIntegerArrayDNE()
     {
-        AttributeUtil.evaluateIntegerArray(myTag, new XSSFRichTextString("${dne}"), myBeans, Arrays.asList(1));
+        AttributeUtil.evaluateIntegerArray(myTag, new XSSFRichTextString("${dne}"), myBeans, Collections.singletonList(1));
     }
 
     /**
@@ -585,7 +590,7 @@ public class AttributeUtilTest
     public void testEvaluateIntegerArrayArrayDNE()
     {
         List<List<Integer>> def = new ArrayList<>();
-        def.add(Arrays.asList(1));
+        def.add(Collections.singletonList(1));
         AttributeUtil.evaluateIntegerArrayArray(myTag, new XSSFRichTextString("${dne}"), myBeans, def);
     }
 
@@ -602,7 +607,7 @@ public class AttributeUtilTest
         List<List<Integer>> expected = new ArrayList<>();
         expected.add(Arrays.asList(4, 8));
         expected.add(Arrays.asList(15, 16, 23));
-        expected.add(Arrays.asList(42));
+        expected.add(Collections.singletonList(42));
 
         for (int i = 0; i < expected.size(); i++)
         {
@@ -629,7 +634,7 @@ public class AttributeUtilTest
         List<List<Integer>> expected = new ArrayList<>();
         expected.add(Arrays.asList(4, 8));
         expected.add(Arrays.asList(15, 16, 23));
-        expected.add(Arrays.asList(42));
+        expected.add(Collections.singletonList(42));
 
         for (int i = 0; i < expected.size(); i++)
         {
@@ -656,7 +661,7 @@ public class AttributeUtilTest
         List<List<Integer>> expected = new ArrayList<>();
         expected.add(Arrays.asList(4, 8));
         expected.add(Arrays.asList(15, 16, 23));
-        expected.add(Arrays.asList(42));
+        expected.add(Collections.singletonList(42));
 
         for (int i = 0; i < expected.size(); i++)
         {

@@ -32,10 +32,10 @@ public enum BorderType
     DASHDOT         ((short) BorderStyle.DASH_DOT.ordinal()),
     MEDIUMDASHDOT   ((short) BorderStyle.MEDIUM_DASH_DOT.ordinal()),
     DASHDOTDOT      ((short) BorderStyle.DASH_DOT_DOT.ordinal()),
-    MEDIUMDASHDOTDOT((short) BorderStyle.MEDIUM_DASH_DOT_DOTC.ordinal()),  // DOTC: [sic]
+    MEDIUMDASHDOTDOT((short) BorderStyle.MEDIUM_DASH_DOT_DOT.ordinal()),
     SLANTEDDASHDOT  ((short) BorderStyle.SLANTED_DASH_DOT.ordinal());
 
-    private short myIndex;
+    private final short myIndex;
 
     /**
      * Constructs a <code>BorderType</code>.

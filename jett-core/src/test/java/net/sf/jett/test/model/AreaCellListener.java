@@ -16,7 +16,7 @@ import net.sf.jett.event.CellListener;
  */
 public class AreaCellListener implements CellListener
 {
-    private int myAreaThreshold;
+    private final int myAreaThreshold;
 
     /**
      * Creates an <code>AreaCellListener</code> that turns text in all
@@ -61,8 +61,7 @@ public class AreaCellListener implements CellListener
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
 
-        if (oldValue != null && oldValue.toString().contains("area") &&
-                newValue != null && newValue instanceof Number)
+        if (oldValue != null && oldValue.toString().contains("area") && newValue instanceof Number)
         {
             double population = ((Number) newValue).doubleValue();
             if (population >= myAreaThreshold)
@@ -70,15 +69,15 @@ public class AreaCellListener implements CellListener
                 Workbook workbook = cell.getSheet().getWorkbook();
                 CellStyle style = workbook.createCellStyle();
                 style.cloneStyleFrom(cell.getCellStyle());
-                short fontIdx = style.getFontIndex();
+                int fontIdx = style.getFontIndex();
                 Font font = workbook.getFontAt(fontIdx);
-                Font italicFont = workbook.findFont(font.getBoldweight(), font.getColor(), font.getFontHeight(),
+                Font italicFont = workbook.findFont(font.getBold(), font.getColor(), font.getFontHeight(),
                         font.getFontName(), true, font.getStrikeout(), font.getTypeOffset(),
                         font.getUnderline());
                 if (italicFont == null)
                 {
                     italicFont = workbook.createFont();
-                    italicFont.setBoldweight(font.getBoldweight());
+                    italicFont.setBold(font.getBold());
                     italicFont.setColor(font.getColor());
                     italicFont.setFontHeight(font.getFontHeight());
                     italicFont.setFontName(font.getFontName());

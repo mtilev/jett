@@ -1,8 +1,8 @@
 package net.sf.jett.formula;
 
-import java.util.List;
-
 import net.sf.jett.util.FormulaUtil;
+
+import java.util.List;
 
 /**
  * A <code>Formula</code> represents an Excel-like formula inside "$[" and "]"
@@ -21,8 +21,8 @@ public class Formula
      */
     public static final String END_FORMULA = "]";
 
-    private String myFormulaText;
-    private List<CellRef> myCellRefs;
+    private final String myFormulaText;
+    private final List<CellRef> myCellRefs;
 
     /**
      * Creates a <code>Formula</code> with the given formula text and the given

@@ -1,28 +1,24 @@
 package net.sf.jett.test;
 
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import net.sf.jett.transform.ExcelTransformer;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
-import net.sf.jett.transform.ExcelTransformer;
+import static org.junit.Assert.*;
 
 /**
  * This JUnit Test class tests the ability of <code>ExcelTransformer</code> to
@@ -41,15 +37,13 @@ public class MultipleNonConsecutiveTest extends TestCase
      * @param inFilename  The input filename.
      * @param outFilename The output filename.
      * @throws IOException            If an I/O error occurs.
-     * @throws InvalidFormatException If the input spreadsheet is invalid.
      * @since 0.7.0
      */
     @Override
     protected void genericTest(String inFilename, String outFilename)
-            throws IOException, InvalidFormatException
-    {
+            throws IOException {
         try (FileOutputStream fileOut = new FileOutputStream(outFilename);
-             InputStream fileIn = new BufferedInputStream(new FileInputStream(inFilename)))
+             InputStream fileIn = new BufferedInputStream(Files.newInputStream(Paths.get(inFilename))))
         {
             Workbook workbook;
             ExcelTransformer transformer = new ExcelTransformer();
@@ -272,7 +266,7 @@ public class MultipleNonConsecutiveTest extends TestCase
         // "cloneSheet".  Test them by setting them in the template sheet.
         // The "checkSheet" method will check all resultant sheets to see if they
         // retain these settings.
-        assertEquals("org.apache.poi.ss.util.CellRangeAddress [A:A]", sheet.getRepeatingColumns().toString());
+        assertEquals("org.apache.poi.ss.util.CellRangeAddress [A0:A0]", sheet.getRepeatingColumns().toString());
         assertEquals("org.apache.poi.ss.util.CellRangeAddress [1:1]", sheet.getRepeatingRows().toString());
 
         assertEquals(2, ps.getCopies());

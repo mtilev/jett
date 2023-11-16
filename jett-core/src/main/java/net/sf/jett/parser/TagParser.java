@@ -1,17 +1,16 @@
 package net.sf.jett.parser;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.RichTextString;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.formula.Formula;
 import net.sf.jett.util.RichTextStringUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A <code>TagParser</code> parses one JETT XML tag, either a begin tag or an
@@ -39,16 +38,16 @@ public class TagParser
      */
     public static final String END_BODILESS_TAG = "/>";
 
-    private Cell myCell;
+    private final Cell myCell;
     private String myCellText;
-    private RichTextString myCellRichTextString;
-    private int myStartIdx;
+    private final RichTextString myCellRichTextString;
+    private final int myStartIdx;
     private String myNamespace;
     private String myTagName;
     private boolean amIATag;
     private boolean amIEndTag;
     private boolean amIBodiless;
-    private Map<String, RichTextString> myAttributes = new HashMap<String, RichTextString>();
+    private final Map<String, RichTextString> myAttributes = new HashMap<>();
     private int myTagStartIdx;
     private int myTagEndIdx;
 
@@ -344,7 +343,7 @@ public class TagParser
      */
     public String getNamespaceAndTagName()
     {
-        if (myNamespace != null && myNamespace.length() > 0)
+        if (myNamespace != null && !myNamespace.isEmpty())
             return myNamespace + ":" + myTagName;
         else
             return myTagName;

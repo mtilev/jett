@@ -1,15 +1,11 @@
 package net.sf.jett.tag;
 
-import org.apache.poi.ss.usermodel.RichTextString;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.util.*;
 
 /**
  * <p>A <code>BaseHideTag</code> represents something that can be hidden conditionally.</p>
@@ -31,7 +27,7 @@ public abstract class BaseHideTag extends BaseTag
     public static final String ATTR_TEST = "test";
 
     private static final List<String> REQ_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_TEST));
+            new ArrayList<>(Collections.singletonList(ATTR_TEST));
 
     private boolean amIHiding;
 
@@ -63,7 +59,6 @@ public abstract class BaseHideTag extends BaseTag
      * Validates the attributes for this <code>Tag</code>.  This tag must have a
      * body.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void validateAttributes() throws TagParseException
     {

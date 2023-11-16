@@ -1,37 +1,25 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Color;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-
 import net.sf.jett.exception.TagParseException;
-import net.sf.jett.model.Block;
-import net.sf.jett.model.CellStyleCache;
-import net.sf.jett.model.ExcelColor;
-import net.sf.jett.model.FontCache;
-import net.sf.jett.model.Style;
-import net.sf.jett.model.WorkbookContext;
+import net.sf.jett.model.*;
 import net.sf.jett.parser.StyleParser;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>A <code>StyleTag</code> represents a dynamically determined style for a
@@ -178,7 +166,7 @@ public class StyleTag extends BaseTag
                 property = parts[0].trim();
                 value = parts[1].trim();
 
-                if (value.length() >= 1)
+                if (!value.isEmpty())
                 {
                     StyleParser.addStyle(myStyle, property, value);
                 }
@@ -252,24 +240,24 @@ public class StyleTag extends BaseTag
 
         logger.debug("eAAS: cell at ({}, {})", cell.getRowIndex(), cell.getColumnIndex());
 
-        short alignment = (myStyle.getAlignment() != null) ? myStyle.getAlignment().getIndex() : cs.getAlignment();
-        short borderBottom = (myStyle.getBorderBottomType() != null) ? myStyle.getBorderBottomType().getIndex() : cs.getBorderBottom();
-        short borderLeft = (myStyle.getBorderLeftType() != null) ? myStyle.getBorderLeftType().getIndex() : cs.getBorderLeft();
-        short borderRight = (myStyle.getBorderRightType() != null) ? myStyle.getBorderRightType().getIndex() : cs.getBorderRight();
-        short borderTop = (myStyle.getBorderTopType() != null) ? myStyle.getBorderTopType().getIndex() : cs.getBorderTop();
+        HorizontalAlignment alignment = (myStyle.getAlignment() != null) ? HorizontalAlignment.values()[myStyle.getAlignment().getIndex()] : cs.getAlignment();
+        BorderStyle borderBottom = (myStyle.getBorderBottomType() != null) ? BorderStyle.values()[myStyle.getBorderBottomType().getIndex()] : cs.getBorderBottom();
+        BorderStyle borderLeft = (myStyle.getBorderLeftType() != null) ? BorderStyle.values()[myStyle.getBorderLeftType().getIndex()] : cs.getBorderLeft();
+        BorderStyle borderRight = (myStyle.getBorderRightType() != null) ? BorderStyle.values()[myStyle.getBorderRightType().getIndex()] : cs.getBorderRight();
+        BorderStyle borderTop = (myStyle.getBorderTopType() != null) ? BorderStyle.values()[myStyle.getBorderTopType().getIndex()] : cs.getBorderTop();
         String dataFormat = (myStyle.getDataFormat() != null) ? myStyle.getDataFormat() : cs.getDataFormatString();
         Color fillBackgroundColor = (myStyle.getFillBackgroundColor() != null) ?
                 SheetUtil.getColor(workbook, myStyle.getFillBackgroundColor()) : cs.getFillBackgroundColorColor();
         Color fillForegroundColor = (myStyle.getFillForegroundColor() != null) ?
                 SheetUtil.getColor(workbook, myStyle.getFillForegroundColor()): cs.getFillForegroundColorColor();
-        short fillPattern = (myStyle.getFillPatternType() != null) ? myStyle.getFillPatternType().getIndex() : cs.getFillPattern();
+        FillPatternType fillPattern = (myStyle.getFillPatternType() != null) ? FillPatternType.values()[myStyle.getFillPatternType().getIndex()] : cs.getFillPattern();
         boolean hidden = (myStyle.isHidden() != null) ? myStyle.isHidden() : cs.getHidden();
         short indention = (myStyle.getIndention() != null) ? myStyle.getIndention() : cs.getIndention();
         boolean locked = (myStyle.isLocked() != null) ? myStyle.isLocked() : cs.getLocked();
-        short verticalAlignment = (myStyle.getVerticalAlignment() != null) ?
-                myStyle.getVerticalAlignment().getIndex() : cs.getVerticalAlignment();
+        VerticalAlignment verticalAlignment = (myStyle.getVerticalAlignment() != null) ?
+                VerticalAlignment.values()[myStyle.getVerticalAlignment().getIndex()] : cs.getVerticalAlignment();
         boolean wrapText = (myStyle.isWrappingText() != null) ? myStyle.isWrappingText() : cs.getWrapText();
-        short fontBoldweight = (myStyle.getFontBoldweight() != null) ? myStyle.getFontBoldweight().getIndex() : f.getBoldweight();
+        boolean fontBoldweight = (myStyle.getFontBoldweight() != null) ? myStyle.getFontBoldweight() : f.getBold();
         int fontCharset = (myStyle.getFontCharset() != null) ? myStyle.getFontCharset().getIndex() : f.getCharSet();
         short fontHeightInPoints = (myStyle.getFontHeightInPoints() != null) ? myStyle.getFontHeightInPoints() : f.getFontHeightInPoints();
         String fontName = (myStyle.getFontName() != null) ? myStyle.getFontName() : f.getFontName();
@@ -297,14 +285,14 @@ public class StyleTag extends BaseTag
             short hssfFontColor = (myStyle.getFontColor() != null) ?
                     ((HSSFColor) SheetUtil.getColor(workbook, myStyle.getFontColor())).getIndex() : f.getColor();
             if (hssfBottomBorderColor != 0)
-                bottomBorderColor = ExcelColor.getHssfColorByIndex(hssfBottomBorderColor);
+                bottomBorderColor = ExcelColor.getHssfColorByIndex(hssfBottomBorderColor).getColor();
             if (hssfLeftBorderColor != 0)
-                leftBorderColor = ExcelColor.getHssfColorByIndex(hssfLeftBorderColor);
+                leftBorderColor = ExcelColor.getHssfColorByIndex(hssfLeftBorderColor).getColor();
             if (hssfRightBorderColor != 0)
-                rightBorderColor = ExcelColor.getHssfColorByIndex(hssfRightBorderColor);
+                rightBorderColor = ExcelColor.getHssfColorByIndex(hssfRightBorderColor).getColor();
             if (hssfTopBorderColor != 0)
-                topBorderColor = ExcelColor.getHssfColorByIndex(hssfTopBorderColor);
-            fontColor = ExcelColor.getHssfColorByIndex(hssfFontColor);
+                topBorderColor = ExcelColor.getHssfColorByIndex(hssfTopBorderColor).getColor();
+            fontColor = ExcelColor.getHssfColorByIndex(hssfFontColor).getColor();
 
             rotationDegrees = (myStyle.getRotationDegrees() != null) ? myStyle.getRotationDegrees() : cs.getRotation();
         }

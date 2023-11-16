@@ -1,17 +1,12 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.RichTextString;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.Block;
 import net.sf.jett.model.ForLoopTagStatus;
 import net.sf.jett.util.AttributeUtil;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.util.*;
 
 /**
  * <p>A <code>ForTag</code> represents a repetitively placed <code>Block</code>
@@ -51,7 +46,7 @@ public class ForTag extends BaseLoopTag
     private static final List<String> REQ_ATTRS =
             new ArrayList<>(Arrays.asList(ATTR_VAR, ATTR_START, ATTR_END));
     private static final List<String> OPT_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_STEP));
+            new ArrayList<>(Collections.singletonList(ATTR_STEP));
 
     private String myVarName;
     private int myStart;

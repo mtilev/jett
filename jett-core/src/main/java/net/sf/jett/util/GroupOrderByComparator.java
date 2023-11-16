@@ -1,10 +1,10 @@
 package net.sf.jett.util;
 
-import java.util.Comparator;
-import java.util.List;
-
 import net.sf.jett.exception.ParseException;
 import net.sf.jett.model.Group;
+
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * A <code>GroupOrderByComparator</code> is an <code>OrderByComparator</code>
@@ -17,8 +17,8 @@ import net.sf.jett.model.Group;
  */
 public class GroupOrderByComparator<T extends Group> implements Comparator<T>
 {
-    private OrderByComparator<Object> myOrderByComparator;
-    private List<String> myGroupByProperties;
+    private final OrderByComparator<Object> myOrderByComparator;
+    private final List<String> myGroupByProperties;
 
     /**
      * Constructs a <code>GroupOrderByComparator</code> that operates on the
@@ -57,9 +57,9 @@ public class GroupOrderByComparator<T extends Group> implements Comparator<T>
             {
                 if (!orderByInGroupBy)
                     throw new ParseException("The \"order by\" property \"" + orderBy +
-                            "\" is in the \"group by\" properties (" + myGroupByProperties.toString() +
+                            "\" is in the \"group by\" properties (" + myGroupByProperties +
                             "), but it must not follow other \"order by\" properties (" +
-                            orderByProperties.toString() + ") that aren't \"group by\" properties.");
+							orderByProperties + ") that aren't \"group by\" properties.");
             }
             else
             {

@@ -1,24 +1,16 @@
 package net.sf.jett.tag;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.IOUtils;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.Block;
 import net.sf.jett.util.AttributeUtil;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.util.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * <p>An <code>ImageTag</code> represents an image to be placed on the sheet.
@@ -106,7 +98,7 @@ public class ImageTag extends BaseTag
     public static final String DEF_TYPE = TYPE_PNG;
 
     private static final List<String> REQ_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_PATHNAME));
+            new ArrayList<>(Collections.singletonList(ATTR_PATHNAME));
     private static final List<String> OPT_ATTRS =
             new ArrayList<>(Arrays.asList(
                     ATTR_ROWS, ATTR_COLS, ATTR_TYPE));
@@ -231,7 +223,7 @@ public class ImageTag extends BaseTag
         int top = block.getTopRowNum();
 
         int pictIdx;
-        try (InputStream is = new FileInputStream(myPathname))
+        try (InputStream is = Files.newInputStream(Paths.get(myPathname)))
         {
             byte[] imageData = IOUtils.toByteArray(is);
             pictIdx = workbook.addPicture(imageData, myType);
@@ -241,7 +233,7 @@ public class ImageTag extends BaseTag
             throw new TagParseException("Read of pathname \"" + myPathname + "\" failed.", e);
         }
 
-        Drawing drawing = context.getOrCreateDrawing();
+        Drawing<?> drawing = context.getOrCreateDrawing();
         ClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
         anchor.setCol1(left);
         anchor.setRow1(top);

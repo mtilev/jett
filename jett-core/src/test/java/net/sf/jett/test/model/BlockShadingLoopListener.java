@@ -1,11 +1,6 @@
 package net.sf.jett.test.model;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 
 import net.sf.jett.event.TagLoopEvent;
 import net.sf.jett.event.TagLoopListener;
@@ -71,7 +66,7 @@ public class BlockShadingLoopListener implements TagLoopListener
                     CellStyle newStyle = workbook.createCellStyle();
                     newStyle.cloneStyleFrom(style);
                     newStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-                    newStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                    newStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
                     cell.setCellStyle(newStyle);
                 }
             }

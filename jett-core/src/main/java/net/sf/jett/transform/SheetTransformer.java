@@ -1,24 +1,5 @@
 package net.sf.jett.transform;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.ConditionalFormatting;
-import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-
 import net.sf.jett.event.SheetEvent;
 import net.sf.jett.event.SheetListener;
 import net.sf.jett.expression.Expression;
@@ -31,6 +12,13 @@ import net.sf.jett.parser.TagParser;
 import net.sf.jett.tag.TagContext;
 import net.sf.jett.util.FormulaUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+
+import java.util.*;
 
 /**
  * A <code>SheetTransformer</code> knows how to transform one
@@ -61,7 +49,7 @@ public class SheetTransformer
          * properties have been transformed.
          * @param sheet The given <code>Sheet</code>.
          */
-        public void applySettings(Sheet sheet);
+		void applySettings(Sheet sheet);
     }
 
     /**
@@ -139,7 +127,7 @@ public class SheetTransformer
         tagContext.setSheet(sheet);
         tagContext.setBlock(block);
         tagContext.setBeans(beans);
-        tagContext.setProcessedCellsMap(new HashMap<String, Cell>());
+        tagContext.setProcessedCellsMap(new HashMap<>());
         List<CellRangeAddress> mergedRegions = new ArrayList<>();
         tagContext.setMergedRegions(mergedRegions);
         readMergedRegions(sheet, mergedRegions);
@@ -270,7 +258,7 @@ public class SheetTransformer
                 for (int cellNum = left; cellNum <= right; cellNum++)
                 {
                     Cell cell = row.getCell(cellNum);
-                    if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
+                    if (cell != null && cell.getCellType() == CellType.STRING)
                     {
                         String cellText = cell.getStringCellValue();
                         if (cellText != null)
@@ -347,7 +335,7 @@ public class SheetTransformer
                 for (int cellNum = left; cellNum <= right; cellNum++)
                 {
                     Cell cell = row.getCell(cellNum);
-                    if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
+                    if (cell != null && cell.getCellType() == CellType.STRING)
                     {
                         String cellText = cell.getStringCellValue();
                         if (cellText != null && cellText.startsWith(Formula.BEGIN_FORMULA) &&

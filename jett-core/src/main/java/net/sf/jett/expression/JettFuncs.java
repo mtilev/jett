@@ -1,10 +1,10 @@
 package net.sf.jett.expression;
 
+import org.apache.poi.ss.util.CellReference;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.poi.ss.util.CellReference;
 
 /**
  * A <code>JettFuncs</code> object is an object that represents JETT utility

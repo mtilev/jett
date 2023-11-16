@@ -1,10 +1,10 @@
 package net.sf.jett.expression;
 
+import org.apache.commons.jexl2.MapContext;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.jexl2.MapContext;
 
 /**
  * A <code>ClassAwareMapContext</code> is a JEXL <code>MapContext</code> that
@@ -61,7 +61,10 @@ public class ClassAwareMapContext extends MapContext
     {
         try
         {
-            return super.has(name) || additionalValues.containsKey(name) || Class.forName(name) != null;
+			if (!super.has(name) && !additionalValues.containsKey(name)) {
+				Class.forName(name);
+			}
+			return true;
         }
         catch (ClassNotFoundException e)
         {

@@ -1,21 +1,16 @@
 package net.sf.jett.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.formula.SheetNameFormatter;
-
 import net.sf.jett.formula.CellRef;
 import net.sf.jett.formula.CellRefRange;
 import net.sf.jett.formula.Formula;
 import net.sf.jett.model.WorkbookContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.formula.SheetNameFormatter;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The <code>FormulaUtil</code> utility class provides methods for Excel
@@ -85,7 +80,7 @@ public class FormulaUtil
                 {
                     List<CellRef> cellRefs = new ArrayList<>();
                     CellRef mappedCellRef;
-                    if (sheetName == null || "".equals(sheetName))
+                    if (sheetName == null || sheetName.isEmpty())
                     {
                         // Local sheet reference.
                         mappedCellRef = new CellRef(cellRef.getRow(), cellRef.getCol(),
@@ -127,7 +122,7 @@ public class FormulaUtil
         String cellKey;
         String cellRefSheetName = cellRef.getSheetName();
         // If no sheet name, then prepend the sheet name from the Formula key.
-        if (cellRefSheetName == null || "".equals(cellRefSheetName))
+        if (cellRefSheetName == null || cellRefSheetName.isEmpty())
         {
             // Prepend sheet name from formula key.
             cellKey = sheetName + "!" + cellRef.formatAsString();
@@ -319,9 +314,7 @@ public class FormulaUtil
                 logger.debug("  curr is {}", curr.formatAsString());
                 if (first == null)
                 {
-                    vertical = false;
-                    horizontal = false;
-                    first = curr;
+					first = curr;
                     firstIdx = i;
                     logger.debug("    Case first was null; first: {}, firstIdx = {}",
                             first.formatAsString(), firstIdx);

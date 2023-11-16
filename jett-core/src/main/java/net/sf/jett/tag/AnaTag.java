@@ -1,19 +1,15 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import net.sf.jagg.Analytic;
 import net.sf.jagg.AnalyticAggregator;
-import net.sf.jagg.model.AnalyticValue;
 import net.sf.jagg.exception.JaggException;
-import org.apache.poi.ss.usermodel.RichTextString;
-
+import net.sf.jagg.model.AnalyticValue;
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.util.*;
 
 /**
  * <p>An <code>AnaTag</code> represents analytic values calculated from a
@@ -58,7 +54,7 @@ public class AnaTag extends BaseTag
     private static final List<String> REQ_ATTRS =
             new ArrayList<>(Arrays.asList(ATTR_ITEMS, ATTR_ANALYTICS, ATTR_VALUES_VAR));
     private static final List<String> OPT_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_ANALYTICS_VAR));
+            new ArrayList<>(Collections.singletonList(ATTR_ANALYTICS_VAR));
 
     private List<Object> myList = null;
     private List<AnalyticAggregator> myAnalytics = null;

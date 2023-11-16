@@ -1,14 +1,13 @@
 package net.sf.jett.tag;
 
-import java.util.List;
-import java.util.Map;
-
+import net.sf.jett.model.Block;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import net.sf.jett.model.Block;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A <code>TagContext</code> object represents the context associated with a
@@ -22,7 +21,7 @@ public class TagContext
     private Block myBlock;
     private Map<String, Object> myBeans;
     private Map<String, Cell> myProcessedCells;
-    private Drawing myDrawing;
+    private Drawing<?> myDrawing;
     private List<CellRangeAddress> myMergedRegions;
     private List<List<CellRangeAddress>> myConditionalFormattingRegions;
     private Tag myCurrTag;
@@ -124,7 +123,7 @@ public class TagContext
      * @return A <code>Drawing</code>.
      * @since 0.2.0
      */
-    public Drawing createDrawing()
+    public Drawing<?> createDrawing()
     {
         if (myDrawing == null)
         {
@@ -139,7 +138,7 @@ public class TagContext
      * @return A <code>Drawing</code>.
      * @since 0.11.0
      */
-    public Drawing getOrCreateDrawing()
+    public Drawing<?> getOrCreateDrawing()
     {
         if (myDrawing == null)
         {
@@ -159,7 +158,7 @@ public class TagContext
      *    yet.
      * @since 0.2.0
      */
-    public Drawing getDrawing()
+    public Drawing<?> getDrawing()
     {
         if (myDrawing == null)
         {
@@ -175,7 +174,7 @@ public class TagContext
      * @param drawing A <code>Drawing</code>.
      * @since 0.2.0
      */
-    public void setDrawing(Drawing drawing)
+    public void setDrawing(Drawing<?> drawing)
     {
         myDrawing = drawing;
     }

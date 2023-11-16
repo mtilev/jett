@@ -1,21 +1,18 @@
 package net.sf.jett.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
+import net.sf.jett.util.SheetUtil;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Color;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
-import net.sf.jett.util.SheetUtil;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>A <code>CellStyleCache</code> is used internally to keep track of
@@ -34,8 +31,8 @@ public class CellStyleCache
 
     private static final String PROP_SEP = "|";
 
-    private Workbook myWorkbook;
-    private Map<String, CellStyle> myCellStyleMap;
+    private final Workbook myWorkbook;
+    private final Map<String, CellStyle> myCellStyleMap;
 
     /**
      * Constructs a <code>CellStyleCache</code> on a <code>Workbook</code>.
@@ -109,10 +106,10 @@ public class CellStyleCache
      * @return A <code>CellStyle</code> that matches all given properties, or
      * <code>null</code> if it doesn't exist.
      */
-    public CellStyle retrieveCellStyle(short fontBoldweight, boolean fontItalic, Color fontColor, String fontName,
-                                       short fontHeightInPoints, short alignment, short borderBottom, short borderLeft, short borderRight,
-                                       short borderTop, String dataFormat, byte fontUnderline, boolean fontStrikeout, boolean wrapText,
-                                       Color fillBackgroundColor, Color fillForegroundColor, short fillPattern, short verticalAlignment,
+    public CellStyle retrieveCellStyle(boolean fontBoldweight, boolean fontItalic, Color fontColor, String fontName,
+                                       short fontHeightInPoints, HorizontalAlignment alignment, BorderStyle borderBottom, BorderStyle borderLeft, BorderStyle borderRight,
+                                       BorderStyle borderTop, String dataFormat, byte fontUnderline, boolean fontStrikeout, boolean wrapText,
+                                       Color fillBackgroundColor, Color fillForegroundColor, FillPatternType fillPattern, VerticalAlignment verticalAlignment,
                                        short indention, short rotation, Color bottomBorderColor, Color leftBorderColor, Color rightBorderColor,
                                        Color topBorderColor, int fontCharset, short fontTypeOffset, boolean locked, boolean hidden)
     {
@@ -198,14 +195,14 @@ public class CellStyleCache
             HSSFFont hf = (HSSFFont) f;
             fontColor = hf.getHSSFColor((HSSFWorkbook) myWorkbook);
             // HSSF only stores border colors if the borders aren't "NONE".
-            if (cs.getBorderBottom() != CellStyle.BORDER_NONE)
-                bottomColor = ExcelColor.getHssfColorByIndex(cs.getBottomBorderColor());
-            if (cs.getBorderLeft() != CellStyle.BORDER_NONE)
-                leftColor = ExcelColor.getHssfColorByIndex(cs.getLeftBorderColor());
-            if (cs.getBorderRight() != CellStyle.BORDER_NONE)
-                rightColor = ExcelColor.getHssfColorByIndex(cs.getRightBorderColor());
-            if (cs.getBorderTop() != CellStyle.BORDER_NONE)
-                topColor = ExcelColor.getHssfColorByIndex(cs.getTopBorderColor());
+            if (cs.getBorderBottom() != BorderStyle.NONE)
+                bottomColor = ExcelColor.getHssfColorByIndex(cs.getBottomBorderColor()).getColor();
+            if (cs.getBorderLeft() != BorderStyle.NONE)
+                leftColor = ExcelColor.getHssfColorByIndex(cs.getLeftBorderColor()).getColor();
+            if (cs.getBorderRight() != BorderStyle.NONE)
+                rightColor = ExcelColor.getHssfColorByIndex(cs.getRightBorderColor()).getColor();
+            if (cs.getBorderTop() != BorderStyle.NONE)
+                topColor = ExcelColor.getHssfColorByIndex(cs.getTopBorderColor()).getColor();
         }
         else if (cs instanceof XSSFCellStyle)
         {
@@ -220,7 +217,7 @@ public class CellStyleCache
         else
             throw new IllegalArgumentException("Bad CellStyle type: " + cs.getClass().getName());
 
-        return getRepresentation(f.getBoldweight(), f.getItalic(), fontColor, f.getFontName(),
+        return getRepresentation(f.getBold(), f.getItalic(), fontColor, f.getFontName(),
                 f.getFontHeightInPoints(), cs.getAlignment(), cs.getBorderBottom(), cs.getBorderLeft(), cs.getBorderRight(),
                 cs.getBorderTop(), cs.getDataFormatString(), f.getUnderline(), f.getStrikeout(), cs.getWrapText(),
                 cs.getFillBackgroundColorColor(), cs.getFillForegroundColorColor(), cs.getFillPattern(), cs.getVerticalAlignment(),
@@ -261,66 +258,63 @@ public class CellStyleCache
      * @param hidden Whether the cell is "hidden".
      * @return The string representation.
      */
-    private String getRepresentation(short fontBoldweight, boolean fontItalic, Color fontColor, String fontName,
-                                     short fontHeightInPoints, short alignment, short borderBottom, short borderLeft, short borderRight,
-                                     short borderTop, String dataFormat, byte fontUnderline, boolean fontStrikeout, boolean wrapText,
-                                     Color fillBackgroundColor, Color fillForegroundColor, short fillPattern, short verticalAlignment,
+    private String getRepresentation(boolean fontBoldweight, boolean fontItalic, Color fontColor, String fontName,
+                                     short fontHeightInPoints, HorizontalAlignment alignment, BorderStyle borderBottom, BorderStyle borderLeft, BorderStyle borderRight,
+                                     BorderStyle borderTop, String dataFormat, byte fontUnderline, boolean fontStrikeout, boolean wrapText,
+                                     Color fillBackgroundColor, Color fillForegroundColor, FillPatternType fillPattern, VerticalAlignment verticalAlignment,
                                      short indention, short rotation, Color bottomBorderColor, Color leftBorderColor, Color rightBorderColor,
                                      Color topBorderColor, int fontCharset, short fontTypeOffset, boolean locked, boolean hidden)
     {
-        StringBuilder buf = new StringBuilder();
 
-        buf.append(fontBoldweight).append(PROP_SEP);
-        // Font italic
-        buf.append(fontItalic).append(PROP_SEP);
-        // Font color
-        buf.append(SheetUtil.getColorHexString(fontColor));
-        // Font name
-        buf.append(PROP_SEP).append(fontName);
-        // Font height in points
-        buf.append(PROP_SEP).append(fontHeightInPoints);
-        // Alignment
-        buf.append(PROP_SEP).append(alignment);
-        // Borders: Bottom, Left, Right, Top
-        buf.append(PROP_SEP).append(borderBottom);
-        buf.append(PROP_SEP).append(borderLeft);
-        buf.append(PROP_SEP).append(borderRight);
-        buf.append(PROP_SEP).append(borderTop);
-        // Data format
-        buf.append(PROP_SEP).append(dataFormat);
-        // Font underline
-        buf.append(PROP_SEP).append(fontUnderline);
-        // Font strikeout
-        buf.append(PROP_SEP).append(fontStrikeout);
-        // Wrap text
-        buf.append(PROP_SEP).append(wrapText);
-        // Fill bg/fg color
-        buf.append(PROP_SEP).append(SheetUtil.getColorHexString(fillBackgroundColor));
-        buf.append(PROP_SEP).append(SheetUtil.getColorHexString(fillForegroundColor));
-        // Fill pattern
-        buf.append(PROP_SEP).append(fillPattern);
-        // Vertical alignment
-        buf.append(PROP_SEP).append(verticalAlignment);
-        // Indention
-        buf.append(PROP_SEP).append(indention);
-        // Rotation
-        buf.append(PROP_SEP).append(rotation);
-        // DO NOT DO Column width in chars
-        // DO NOT DO row height in points
-        // Border Colors: Bottom, Left, Right, Top
-        buf.append(PROP_SEP).append(SheetUtil.getColorHexString(bottomBorderColor));
-        buf.append(PROP_SEP).append(SheetUtil.getColorHexString(leftBorderColor));
-        buf.append(PROP_SEP).append(SheetUtil.getColorHexString(rightBorderColor));
-        buf.append(PROP_SEP).append(SheetUtil.getColorHexString(topBorderColor));
-        // Font charset
-        buf.append(PROP_SEP).append(fontCharset);
-        // Font type offset
-        buf.append(PROP_SEP).append(fontTypeOffset);
-        // Locked
-        buf.append(PROP_SEP).append(locked);
-        // Hidden
-        buf.append(PROP_SEP).append(hidden);
-
-        return buf.toString();
+		return fontBoldweight + PROP_SEP +
+                // Font italic
+                fontItalic + PROP_SEP +
+                // Font color
+                SheetUtil.getColorHexString(fontColor) +
+                // Font name
+                PROP_SEP + fontName +
+                // Font height in points
+                PROP_SEP + fontHeightInPoints +
+                // Alignment
+                PROP_SEP + alignment +
+                // Borders: Bottom, Left, Right, Top
+                PROP_SEP + borderBottom +
+                PROP_SEP + borderLeft +
+                PROP_SEP + borderRight +
+                PROP_SEP + borderTop +
+                // Data format
+                PROP_SEP + dataFormat +
+                // Font underline
+                PROP_SEP + fontUnderline +
+                // Font strikeout
+                PROP_SEP + fontStrikeout +
+                // Wrap text
+                PROP_SEP + wrapText +
+                // Fill bg/fg color
+                PROP_SEP + SheetUtil.getColorHexString(fillBackgroundColor) +
+                PROP_SEP + SheetUtil.getColorHexString(fillForegroundColor) +
+                // Fill pattern
+                PROP_SEP + fillPattern +
+                // Vertical alignment
+                PROP_SEP + verticalAlignment +
+                // Indention
+                PROP_SEP + indention +
+                // Rotation
+                PROP_SEP + rotation +
+                // DO NOT DO Column width in chars
+                // DO NOT DO row height in points
+                // Border Colors: Bottom, Left, Right, Top
+                PROP_SEP + SheetUtil.getColorHexString(bottomBorderColor) +
+                PROP_SEP + SheetUtil.getColorHexString(leftBorderColor) +
+                PROP_SEP + SheetUtil.getColorHexString(rightBorderColor) +
+                PROP_SEP + SheetUtil.getColorHexString(topBorderColor) +
+                // Font charset
+                PROP_SEP + fontCharset +
+                // Font type offset
+                PROP_SEP + fontTypeOffset +
+                // Locked
+                PROP_SEP + locked +
+                // Hidden
+                PROP_SEP + hidden;
     }
 }

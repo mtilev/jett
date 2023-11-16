@@ -1,20 +1,16 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.model.Block;
 import net.sf.jett.model.WorkbookContext;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.*;
 
 /**
  * <p>An <code>IfTag</code> represents a conditionally placed
@@ -76,13 +72,13 @@ public class IfTag extends BaseTag
      */
     public static final String ATTR_ELSE_ACTION = "elseAction";
     private static final List<String> REQ_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_TEST));
+            new ArrayList<>(Collections.singletonList(ATTR_TEST));
     private static final List<String> OPT_ATTRS =
-            new ArrayList<>(Arrays.asList(ATTR_ELSE_ACTION));
+            new ArrayList<>(Collections.singletonList(ATTR_ELSE_ACTION));
     private static final List<String> REQ_ATTRS_BODILESS =
             new ArrayList<>(Arrays.asList(ATTR_TEST, ATTR_THEN));
     private static final List<String> OPT_ATTRS_BODILESS =
-            new ArrayList<>(Arrays.asList(ATTR_ELSE));
+            new ArrayList<>(Collections.singletonList(ATTR_ELSE));
 
     private String myElseAction;
 

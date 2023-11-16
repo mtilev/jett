@@ -6,7 +6,6 @@
         <version>0.11.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.sf.jett</groupId>
     <artifactId>jett-core</artifactId>
     <packaging>jar</packaging>
     <version>0.11.1-SNAPSHOT</version>
@@ -24,8 +23,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -40,12 +39,12 @@
         <dependency>
             <artifactId>poi</artifactId>
             <groupId>org.apache.poi</groupId>
-            <version>3.14</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <artifactId>poi-ooxml</artifactId>
             <groupId>org.apache.poi</groupId>
-            <version>3.14</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -55,7 +54,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.2</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -67,17 +66,17 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.9.0</version>
+            <version>2.17.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.9.0</version>
+            <version>2.17.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-jcl</artifactId>
-            <version>2.9.0</version>
+            <version>2.17.1</version>
         </dependency>
     </dependencies>
 </project>

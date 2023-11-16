@@ -1,12 +1,6 @@
 package net.sf.jett.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A <code>HashMapWrapper</code> is a <code>HashMap</code> that "wraps" another
@@ -20,8 +14,8 @@ import java.util.Set;
  */
 public class HashMapWrapper<K, V> extends HashMap<K, V>
 {
-    private Map<K, V> myWrappedMap;
-    private int mySize = 0;
+    private final Map<K, V> myWrappedMap;
+    private int mySize;
 
     /**
      * Constructs a <code>HashMapWrapper</code> that wraps the given <code>Map</code>.
@@ -73,9 +67,9 @@ public class HashMapWrapper<K, V> extends HashMap<K, V>
      * @return A <code>Set</code> of mappings in this map and the wrapped map.
      */
     @Override
-    public Set<Map.Entry<K, V>> entrySet()
+    public Set<Entry<K, V>> entrySet()
     {
-        Set<Map.Entry<K, V>> entrySet = new HashSet<>(super.entrySet());
+        Set<Entry<K, V>> entrySet = new HashSet<>(super.entrySet());
         entrySet.addAll(myWrappedMap.entrySet());
         return entrySet;
     }
@@ -152,7 +146,7 @@ public class HashMapWrapper<K, V> extends HashMap<K, V>
     @Override
     public void putAll(Map<? extends K, ? extends V> map)
     {
-        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet())
+        for (Entry<? extends K, ? extends V> entry : map.entrySet())
         {
             put(entry.getKey(), entry.getValue());
         }
@@ -202,7 +196,7 @@ public class HashMapWrapper<K, V> extends HashMap<K, V>
     public Collection<V> values()
     {
         List<V> values = new ArrayList<>();
-        for (Map.Entry<K, V> entry : entrySet())
+        for (Entry<K, V> entry : entrySet())
         {
             values.add(entry.getValue());
         }

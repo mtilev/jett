@@ -1,21 +1,19 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.RichTextString;
-
 import net.sf.jagg.AggregateFunction;
 import net.sf.jagg.Aggregation;
 import net.sf.jagg.Aggregator;
 import net.sf.jagg.exception.JaggException;
 import net.sf.jagg.model.AggregateValue;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>An <code>AggTag</code> represents possibly many aggregate values
@@ -209,7 +207,7 @@ public class AggTag extends BaseTag
 
         myValuesVar = AttributeUtil.evaluateString(this, attributes.get(ATTR_VALUES_VAR), beans, null);
 
-        List<String> groupByProps = AttributeUtil.evaluateList(this, attributes.get(ATTR_GROUP_BY), beans, new ArrayList<String>());
+        List<String> groupByProps = AttributeUtil.evaluateList(this, attributes.get(ATTR_GROUP_BY), beans, new ArrayList<>());
 
         int parallelism = AttributeUtil.evaluatePositiveInt(this, attributes.get(ATTR_PARALLEL), beans, ATTR_PARALLEL, 1);
 

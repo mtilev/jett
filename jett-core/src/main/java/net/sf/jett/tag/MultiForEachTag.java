@@ -1,22 +1,16 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.poi.ss.usermodel.RichTextString;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.expression.Expression;
 import net.sf.jett.model.Block;
 import net.sf.jett.model.PastEndValue;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.RichTextString;
+
+import java.util.*;
 
 /**
  * <p>A <code>MultiForEachTag</code> represents a repetitively placed
@@ -236,9 +230,9 @@ public class MultiForEachTag extends BaseLoopTag
             logger.debug("Collection \"{}\" has size {}", collExpression, collection.size());
         }
 
-        myVarNames = AttributeUtil.evaluateList(this, attributes.get(ATTR_VARS), beans, new ArrayList<String>(0));
+        myVarNames = AttributeUtil.evaluateList(this, attributes.get(ATTR_VARS), beans, new ArrayList<>(0));
 
-        if (myCollections.size() < 1)
+        if (myCollections.isEmpty())
             throw new TagParseException("Must specify at least one Collection in a MultiForEachTag.  None found" + getLocation());
         if (myCollections.size() != myVarNames.size())
             throw new TagParseException("The number of collections and the number of variable names must be the same.  Mismatch found" +
@@ -331,7 +325,7 @@ public class MultiForEachTag extends BaseLoopTag
         {
             String varName = myVarNames.get(i);
             Object value = listOfValues.get(i);
-            if (value != null && value instanceof PastEndValue)
+            if (value instanceof PastEndValue)
                 pastEndRefs.add(varName);
             else
                 beans.put(varName, value);
@@ -344,7 +338,7 @@ public class MultiForEachTag extends BaseLoopTag
             SheetUtil.takePastEndAction(context.getSheet(), currBlock, pastEndRefs, getPastEndAction(), getReplacementExprValue());
 
         // Optional index counter variable.
-        if (myIndexVarName != null && myIndexVarName.length() > 0)
+        if (myIndexVarName != null && !myIndexVarName.isEmpty())
             beans.put(myIndexVarName, index);
     }
 
@@ -365,7 +359,7 @@ public class MultiForEachTag extends BaseLoopTag
             beans.remove(myVarNames.get(i));
 
         // Optional index counter variable.
-        if (myIndexVarName != null && myIndexVarName.length() > 0)
+        if (myIndexVarName != null && !myIndexVarName.isEmpty())
             beans.remove(myIndexVarName);
     }
 
@@ -377,7 +371,7 @@ public class MultiForEachTag extends BaseLoopTag
     private class MultiForEachTagIterator implements Iterator<List<Object>>
     {
         private int myIndex;
-        private List<Iterator<Object>> myIterators;
+        private final List<Iterator<Object>> myIterators;
 
         /**
          * Construct a <code>MultiForEachTagIterator</code> that is initialized to

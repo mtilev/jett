@@ -1,18 +1,17 @@
 package net.sf.jett.tag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Sheet;
-
 import net.sf.jett.exception.TagParseException;
 import net.sf.jett.model.Block;
 import net.sf.jett.transform.BlockTransformer;
 import net.sf.jett.util.AttributeUtil;
 import net.sf.jett.util.SheetUtil;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>A <code>GroupTag</code> represents a set of rows or a set of columns that
@@ -101,7 +100,6 @@ public class GroupTag extends BaseTag
      * body.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void validateAttributes() throws TagParseException
     {
         super.validateAttributes();

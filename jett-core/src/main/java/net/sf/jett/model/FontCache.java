@@ -1,10 +1,8 @@
 package net.sf.jett.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
+import net.sf.jett.util.SheetUtil;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Color;
@@ -12,7 +10,8 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
-import net.sf.jett.util.SheetUtil;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>A <code>FontCache</code> is used internally to keep track of
@@ -31,8 +30,8 @@ public class FontCache
 
     private static final String PROP_SEP = "|";
 
-    private Workbook myWorkbook;
-    private Map<String, Font> myFontMap;
+    private final Workbook myWorkbook;
+    private final Map<String, Font> myFontMap;
 
     /**
      * Constructs a <code>FontCache</code> on a <code>Workbook</code>.
@@ -51,9 +50,9 @@ public class FontCache
      */
     private void cachePreExistingFonts()
     {
-        short numFonts = myWorkbook.getNumberOfFonts();
+        int numFonts = myWorkbook.getNumberOfFonts();
         logger.trace("Caching {} pre-existing cell fonts.", numFonts);
-        for (short i = 0; i < numFonts; i++)
+        for (int i = 0; i < numFonts; i++)
         {
             cacheFont(myWorkbook.getFontAt(i));
         }
@@ -84,7 +83,7 @@ public class FontCache
      * @return A <code>Font</code> that matches all given properties, or
      *    <code>null</code> if it doesn't exist.
      */
-    public Font retrieveFont(short fontBoldweight, boolean fontItalic, Color fontColor, String fontName,
+    public Font retrieveFont(boolean fontBoldweight, boolean fontItalic, Color fontColor, String fontName,
                              short fontHeightInPoints, byte fontUnderline, boolean fontStrikeout, int fontCharset, short fontTypeOffset)
     {
         String representation = getRepresentation(fontBoldweight, fontItalic, fontColor, fontName, fontHeightInPoints,
@@ -148,7 +147,7 @@ public class FontCache
         else
             throw new IllegalArgumentException("Bad Font type: " + f.getClass().getName());
 
-        return getRepresentation(f.getBoldweight(), f.getItalic(), fontColor, f.getFontName(),
+        return getRepresentation(f.getBold(), f.getItalic(), fontColor, f.getFontName(),
                 f.getFontHeightInPoints(), f.getUnderline(), f.getStrikeout(), f.getCharSet(), f.getTypeOffset());
     }
 
@@ -166,29 +165,26 @@ public class FontCache
      * @param fontTypeOffset The font type offset.
      * @return The string representation.
      */
-    private String getRepresentation(short fontBoldweight, boolean fontItalic, Color fontColor, String fontName,
+    private String getRepresentation(boolean fontBoldweight, boolean fontItalic, Color fontColor, String fontName,
                                      short fontHeightInPoints, byte fontUnderline, boolean fontStrikeout, int fontCharset, short fontTypeOffset)
     {
-        StringBuilder buf = new StringBuilder();
 
-        buf.append(fontBoldweight).append(PROP_SEP);
-        // Font italic
-        buf.append(fontItalic).append(PROP_SEP);
-        // Font color
-        buf.append(SheetUtil.getColorHexString(fontColor));
-        // Font name
-        buf.append(PROP_SEP).append(fontName);
-        // Font height in points
-        buf.append(PROP_SEP).append(fontHeightInPoints);
-        // Font underline
-        buf.append(PROP_SEP).append(fontUnderline);
-        // Font strikeout
-        buf.append(PROP_SEP).append(fontStrikeout);
-        // Font charset
-        buf.append(PROP_SEP).append(fontCharset);
-        // Font type offset
-        buf.append(PROP_SEP).append(fontTypeOffset);
-
-        return buf.toString();
+		return fontBoldweight + PROP_SEP +
+                // Font italic
+                fontItalic + PROP_SEP +
+                // Font color
+                SheetUtil.getColorHexString(fontColor) +
+                // Font name
+                PROP_SEP + fontName +
+                // Font height in points
+                PROP_SEP + fontHeightInPoints +
+                // Font underline
+                PROP_SEP + fontUnderline +
+                // Font strikeout
+                PROP_SEP + fontStrikeout +
+                // Font charset
+                PROP_SEP + fontCharset +
+                // Font type offset
+                PROP_SEP + fontTypeOffset;
     }
 }

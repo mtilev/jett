@@ -1,9 +1,9 @@
 package net.sf.jett.expression;
 
+import org.apache.commons.jexl2.JexlEngine;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.jexl2.JexlEngine;
 
 /**
  * <p>An <code>ExpressionFactory</code> is a factory class that
@@ -22,9 +22,9 @@ import org.apache.commons.jexl2.JexlEngine;
  */
 public class ExpressionFactory
 {
-    private JexlEngine myEngine;
-    private Map<String, Object> myFuncs;
-    private Map<String, org.apache.commons.jexl2.Expression> myExpressionCache;
+    private final JexlEngine myEngine;
+    private final Map<String, Object> myFuncs;
+    private final Map<String, org.apache.commons.jexl2.Expression> myExpressionCache;
 
     /**
      * Constructs a <code>ExpressionFactory</code>.  Initializes an internal
