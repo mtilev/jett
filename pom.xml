@@ -4,7 +4,7 @@
     <groupId>net.sf.jett</groupId>
     <artifactId>jett</artifactId>
     <packaging>pom</packaging>
-    <version>0.11.1-SNAPSHOT</version>
+    <version>0.11.1</version>
     <name>Jett</name>
     <url>http://jett.sourceforge.net</url>
     <modules>
